@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "961928716538",
+    "project_id": "sparks-invoice",
+    "storage_bucket": "sparks-invoice.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:961928716538:android:18cff10906af962c11a943",
+        "android_client_info": {
+          "package_name": "com.example.sparks_invoice"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAtoNNZrE2WSUjhSsM3ksnlChavHH1wawI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
