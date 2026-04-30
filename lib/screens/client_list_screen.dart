@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/client.dart';
 import '../services/client_service.dart';
+import '../theme/app_colors.dart';
 import 'client_form_screen.dart';
 
 class ClientListScreen extends StatefulWidget {
@@ -17,10 +18,13 @@ class _ClientListScreenState extends State<ClientListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Clients'), automaticallyImplyLeading: false),
+      appBar: AppBar(
+        title: const Text('Clients', style: TextStyle(fontWeight: FontWeight.bold)), 
+        automaticallyImplyLeading: false
+      ),
       body: Column(children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
           child: TextField(
             controller: _search,
             decoration: InputDecoration(
@@ -45,7 +49,7 @@ class _ClientListScreenState extends State<ClientListScreen> {
               }).toList();
               if (clients.isEmpty) return _empty();
               return ListView.builder(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 80),
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
                 itemCount: clients.length,
                 itemBuilder: (_, i) => _ClientCard(client: clients[i], svc: _svc),
               );
@@ -54,9 +58,10 @@ class _ClientListScreenState extends State<ClientListScreen> {
         ),
       ]),
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'fab-add-client',
         onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ClientFormScreen())),
-        icon: const Icon(Icons.add_rounded),
-        label: const Text('Add Client'),
+        icon: const Icon(Icons.person_add_rounded),
+        label: const Text('Add Client', style: TextStyle(fontWeight: FontWeight.bold)),
       ),
     );
   }
@@ -75,50 +80,92 @@ class _ClientCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
+    final primary = Theme.of(context).colorScheme.primary;
+    final onBg = Theme.of(context).colorScheme.onSurface;
+    final subColor = Theme.of(context).textTheme.bodySmall?.color ?? AppColors.textSecondary;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6), // Rule 3
+      decoration: BoxDecoration(
+        color: AppColors.darkCard,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.12),
+            blurRadius: 15,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
       child: InkWell(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(22),
         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ClientFormScreen(client: client))),
         onLongPress: () => _archive(context),
         child: Padding(
-          padding: const EdgeInsets.all(14),
-          child: Row(children: [
-            CircleAvatar(
-              radius: 26,
-              backgroundColor: Colors.indigo.withOpacity(0.1),
-              child: Text(client.name[0].toUpperCase(), style: const TextStyle(color: Colors.indigo, fontWeight: FontWeight.bold, fontSize: 18)),
-            ),
-            const SizedBox(width: 14),
-            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(client.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-              if (client.contactPerson.isNotEmpty) Text(client.contactPerson, style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
-              const SizedBox(height: 4),
-              Row(children: [
-                Icon(Icons.email_outlined, size: 13, color: Colors.grey.shade500),
-                const SizedBox(width: 4),
-                Expanded(child: Text(client.email, style: TextStyle(color: Colors.grey.shade600, fontSize: 12), overflow: TextOverflow.ellipsis)),
-              ]),
-              if (client.phone.isNotEmpty) Row(children: [
-                Icon(Icons.phone_outlined, size: 13, color: Colors.grey.shade500),
-                const SizedBox(width: 4),
-                Text(client.phone, style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
-              ]),
-            ])),
-            Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+          padding: const EdgeInsets.all(12), // Rule 3
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start, // Rule 6
+            children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(color: Colors.indigo.withOpacity(0.08), borderRadius: BorderRadius.circular(8)),
-                child: Text(client.currency, style: const TextStyle(color: Colors.indigo, fontSize: 11, fontWeight: FontWeight.bold)),
+                width: 56, height: 52,
+                decoration: BoxDecoration(
+                  gradient: AppColors.heroGradient.withOpacity(0.12),
+                  shape: BoxShape.circle,
+                  border: Border.all(color: primary.withOpacity(0.3), width: 1.5),
+                ),
+                child: Center(
+                  child: Text(client.name[0].toUpperCase(), 
+                    style: TextStyle(color: primary, fontWeight: FontWeight.w900, fontSize: 22),
+                    maxLines: 1, // Rule 2
+                    overflow: TextOverflow.ellipsis),
+                ),
               ),
-              const SizedBox(height: 8),
-              IconButton(
-                icon: Icon(Icons.archive_outlined, color: Colors.red.shade300, size: 20),
-                onPressed: () => _archive(context),
-                padding: EdgeInsets.zero, constraints: const BoxConstraints(),
-              ),
-            ]),
-          ]),
+              const SizedBox(width: 12), // Rule 6
+              Expanded( // Rule 1
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(client.name, 
+                      style: TextStyle(fontWeight: FontWeight.w900, fontSize: 17, color: onBg, letterSpacing: -0.5),
+                      maxLines: 1, // Rule 2
+                      overflow: TextOverflow.ellipsis),
+                  if (client.contactPerson.isNotEmpty) ...[
+                    const SizedBox(height: 2),
+                    Text(client.contactPerson, 
+                        style: TextStyle(color: subColor, fontSize: 13, fontWeight: FontWeight.bold),
+                        maxLines: 1, // Rule 2
+                        overflow: TextOverflow.ellipsis),
+                  ],
+                  const SizedBox(height: 6),
+                  Row(children: [
+                    Icon(Icons.email_rounded, size: 14, color: subColor.withOpacity(0.6)),
+                    const SizedBox(width: 6),
+                    Expanded(child: Text(client.email, 
+                        style: TextStyle(color: subColor, fontSize: 12, fontWeight: FontWeight.w500), 
+                        maxLines: 1, // Rule 2
+                        overflow: TextOverflow.ellipsis)),
+                  ]),
+                ])),
+              const SizedBox(width: 8), // Rule 6
+              Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: primary.withOpacity(0.15), 
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(client.currency, 
+                      style: TextStyle(color: primary, fontSize: 11, fontWeight: FontWeight.w900),
+                      maxLines: 1, // Rule 2
+                      overflow: TextOverflow.ellipsis),
+                ),
+                const SizedBox(height: 12),
+                IconButton(
+                  icon: Icon(Icons.archive_rounded, color: AppColors.danger.withOpacity(0.7), size: 24),
+                  onPressed: () => _archive(context),
+                  padding: EdgeInsets.zero, constraints: const BoxConstraints(),
+                ),
+              ]),
+            ],
+          ),
         ),
       ),
     );

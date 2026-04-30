@@ -53,8 +53,7 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? AppColors.darkBg : AppColors.lightBg;
+    final bg = AppColors.darkBg;
 
     return Scaffold(
       backgroundColor: bg,
@@ -71,11 +70,7 @@ class _SplashScreenState extends State<SplashScreen>
                   width: 88,
                   height: 88,
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [AppColors.primaryGradientStart, AppColors.primaryGradientEnd],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
+                    gradient: AppColors.heroGradient,
                     borderRadius: BorderRadius.circular(24),
                     boxShadow: [
                       BoxShadow(
@@ -85,7 +80,7 @@ class _SplashScreenState extends State<SplashScreen>
                       ),
                     ],
                   ),
-                  child: const Icon(Icons.receipt_long_rounded, color: Colors.white, size: 44),
+                  child: const Icon(Icons.flash_on_rounded, color: Colors.white, size: 44),
                 ),
                 const SizedBox(height: 24),
                 // App name

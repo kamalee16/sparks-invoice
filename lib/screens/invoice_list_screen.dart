@@ -1,4 +1,4 @@
-﻿import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/invoice.dart';
@@ -104,23 +104,31 @@ class _InvoiceListScreenState extends State<InvoiceListScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Invoices'),
+        title: const Text('Invoices', style: TextStyle(fontWeight: FontWeight.bold)),
         automaticallyImplyLeading: false,
         actions: [
-          PopupMenuButton<InvoiceStatus?>(
-            icon: const Icon(Icons.filter_list_rounded),
-            onSelected: (v) => setState(() => _statusFilter = v),
-            itemBuilder: (_) => [
-              const PopupMenuItem(value: null, child: Text('All')),
-              ...InvoiceStatus.values.map((s) => PopupMenuItem(value: s, child: Text(_statusLabel(s)))),
-            ],
+          Theme(
+            data: Theme.of(context).copyWith(
+              cardColor: AppColors.darkCard,
+            ),
+            child: PopupMenuButton<InvoiceStatus?>(
+              icon: const Icon(Icons.filter_list_rounded),
+              offset: const Offset(0, 50),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              onSelected: (v) => setState(() => _statusFilter = v),
+              itemBuilder: (_) => [
+                const PopupMenuItem(value: null, child: Text('All Status')),
+                ...InvoiceStatus.values.map((s) => PopupMenuItem(value: s, child: Text(_statusLabel(s)))),
+              ],
+            ),
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'fab-new-invoice',
         onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const InvoiceCreateScreen())),
         icon: const Icon(Icons.add_rounded),
-        label: const Text('New Invoice'),
+        label: const Text('New Invoice', style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: primary,
       ),
       body: StreamBuilder<List<Invoice>>(
@@ -132,7 +140,8 @@ class _InvoiceListScreenState extends State<InvoiceListScreen> {
           if (invoices.isEmpty) return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
             const Icon(Icons.receipt_long_outlined, size: 72, color: AppColors.textMuted),
             const SizedBox(height: 12),
-            const Text('No invoices found', style: TextStyle(color: AppColors.textSecondary, fontSize: 16)),
+            Text(_statusFilter == null ? 'No invoices found' : 'No ${_statusLabel(_statusFilter!)} invoices', 
+              style: const TextStyle(color: AppColors.textSecondary, fontSize: 16)),
           ]));
           return ListView.builder(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
@@ -143,53 +152,118 @@ class _InvoiceListScreenState extends State<InvoiceListScreen> {
               final c = _statusColor(status);
               final sym = inv.currency == 'USD' ? r'$' : 'Rs.';
               final canEdit = status == InvoiceStatus.draft || status == InvoiceStatus.unpaid;
-              return Card(
-                margin: const EdgeInsets.only(bottom: 12),
+              return Container(
+                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6), // Rule 3
+                padding: const EdgeInsets.all(12), // Rule 3
+                decoration: BoxDecoration(
+                  color: AppColors.darkCard,
+                  borderRadius: BorderRadius.circular(22),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.12),
+                      blurRadius: 15,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
                 child: InkWell(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(22),
                   onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => InvoiceDetailsScreen(invoice: inv))),
-                  child: Padding(
-                    padding: const EdgeInsets.all(14),
-                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Row(children: [
-                        Container(width: 42, height: 42, decoration: BoxDecoration(color: c.withOpacity(0.1), borderRadius: BorderRadius.circular(12)), child: Icon(Icons.receipt_outlined, color: c, size: 20)),
-                        const SizedBox(width: 12),
-                        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          Text(inv.invoiceNumber, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: onBg)),
-                          const SizedBox(height: 2),
-                          Text(DateFormat('dd MMM yyyy').format(inv.date.toDate()), style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
-                        ])),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start, // Rule 6
+                      children: [
+                        Container(
+                          width: 52, height: 52, 
+                          decoration: BoxDecoration(
+                            color: c.withOpacity(0.12), 
+                            borderRadius: BorderRadius.circular(16),
+                          ), 
+                          child: Icon(Icons.receipt_rounded, color: c, size: 24),
+                        ),
+                        const SizedBox(width: 12), // Rule 6
+                        Expanded( // Rule 1
+                          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            Text(inv.invoiceNumber, 
+                                style: TextStyle(fontWeight: FontWeight.w900, fontSize: 17, color: onBg, letterSpacing: -0.5),
+                                maxLines: 1, // Rule 2
+                                overflow: TextOverflow.ellipsis),
+                            const SizedBox(height: 4),
+                            Text(DateFormat('dd MMM yyyy').format(inv.date.toDate()), 
+                                style: const TextStyle(color: AppColors.textSecondary, fontSize: 13, fontWeight: FontWeight.bold),
+                                maxLines: 1, // Rule 2
+                                overflow: TextOverflow.ellipsis),
+                          ]),
+                        ),
+                        const SizedBox(width: 8), // Rule 6
                         Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-                          Text('$sym${NumberFormat('#,##,###.##').format(inv.total)}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: onBg)),
-                          const SizedBox(height: 4),
-                          Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3), decoration: BoxDecoration(color: c.withOpacity(0.1), borderRadius: BorderRadius.circular(8)), child: Text(status.name.toUpperCase(), style: TextStyle(color: c, fontSize: 10, fontWeight: FontWeight.bold))),
+                          Text('$sym${NumberFormat('#,##0.##').format(inv.total)}', 
+                              style: TextStyle(fontWeight: FontWeight.w900, fontSize: 17, color: onBg, letterSpacing: -0.5),
+                              maxLines: 1, // Rule 2
+                              overflow: TextOverflow.ellipsis),
+                          const SizedBox(height: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5), 
+                            decoration: BoxDecoration(
+                              color: c.withOpacity(0.15), 
+                              borderRadius: BorderRadius.circular(10),
+                            ), 
+                            child: Text(status.name.toUpperCase(), 
+                                style: TextStyle(color: c, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 0.5),
+                                maxLines: 1, // Rule 2
+                                overflow: TextOverflow.ellipsis),
+                          ),
                         ]),
-                      ]),
-                      const SizedBox(height: 10),
-                      Row(children: [
-                        Expanded(child: OutlinedButton.icon(
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start, // Rule 6
+                      children: [
+                        Expanded(child: TextButton.icon(
                           onPressed: () => _showStatusPicker(inv),
-                          icon: Icon(Icons.update_rounded, size: 14, color: primary),
-                          label: Text('Update Status', style: TextStyle(fontSize: 12, color: primary)),
-                          style: OutlinedButton.styleFrom(minimumSize: const Size(0, 36), padding: const EdgeInsets.symmetric(horizontal: 8), side: BorderSide(color: primary.withOpacity(0.4)), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+                          icon: Icon(Icons.sync_rounded, size: 16, color: primary),
+                          label: Text('Update Status', 
+                              style: TextStyle(fontSize: 13, color: primary, fontWeight: FontWeight.bold),
+                              maxLines: 1, // Rule 2
+                              overflow: TextOverflow.ellipsis),
+                          style: TextButton.styleFrom(
+                            backgroundColor: primary.withOpacity(0.1),
+                            minimumSize: const Size(0, 48), 
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          ),
                         )),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: 12),
                         Expanded(child: canEdit
-                          ? OutlinedButton.icon(
+                          ? TextButton.icon(
                               onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => InvoiceCreateScreen(existingInvoice: inv))),
-                              icon: const Icon(Icons.edit_outlined, size: 14, color: AppColors.warning),
-                              label: const Text('Edit', style: TextStyle(fontSize: 12, color: AppColors.warning)),
-                              style: OutlinedButton.styleFrom(minimumSize: const Size(0, 36), padding: const EdgeInsets.symmetric(horizontal: 8), side: BorderSide(color: AppColors.warning.withOpacity(0.4)), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+                              icon: const Icon(Icons.edit_rounded, size: 16, color: AppColors.warning),
+                              label: const Text('Edit', 
+                                  style: TextStyle(fontSize: 13, color: AppColors.warning, fontWeight: FontWeight.bold),
+                                  maxLines: 1, // Rule 2
+                                  overflow: TextOverflow.ellipsis),
+                              style: TextButton.styleFrom(
+                                backgroundColor: AppColors.warning.withOpacity(0.1),
+                                minimumSize: const Size(0, 48), 
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              ),
                             )
-                          : OutlinedButton.icon(
+                          : TextButton.icon(
                               onPressed: () => _duplicate(inv),
-                              icon: const Icon(Icons.copy_outlined, size: 14, color: AppColors.textSecondary),
-                              label: const Text('Duplicate', style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
-                              style: OutlinedButton.styleFrom(minimumSize: const Size(0, 36), padding: const EdgeInsets.symmetric(horizontal: 8), side: const BorderSide(color: AppColors.textMuted), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+                              icon: const Icon(Icons.copy_rounded, size: 16, color: AppColors.textSecondary),
+                              label: const Text('Duplicate', 
+                                  style: TextStyle(fontSize: 13, color: AppColors.textSecondary, fontWeight: FontWeight.bold),
+                                  maxLines: 1, // Rule 2
+                                  overflow: TextOverflow.ellipsis),
+                              style: TextButton.styleFrom(
+                                backgroundColor: AppColors.textSecondary.withOpacity(0.1),
+                                minimumSize: const Size(0, 48), 
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              ),
                             )),
-                      ]),
-                    ]),
-                  ),
+                      ],
+                    ),
+                  ]),
                 ),
               );
             },

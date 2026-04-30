@@ -144,146 +144,137 @@ class _LoginScreenState extends State<LoginScreen> {
   // ── UI ─────────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
-    final isDark   = Theme.of(context).brightness == Brightness.dark;
     final onSurface = Theme.of(context).colorScheme.onSurface;
     final subColor  = Theme.of(context).textTheme.bodySmall?.color ?? AppColors.textSecondary;
     final primary   = Theme.of(context).colorScheme.primary;
 
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: isDark
-                ? [AppColors.darkBg, const Color(0xFF1E293B)]
-                : [AppColors.lightBg, Colors.white],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Logo
-                    Center(
-                      child: Container(
-                        width: 72, height: 72,
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [AppColors.primaryGradientStart, AppColors.primaryGradientEnd],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
+      backgroundColor: const Color(0xFF111318),
+      body: SafeArea(
+            child: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Logo
+                      Center(
+                        child: Container(
+                          width: 80, height: 80,
+                          decoration: BoxDecoration(
+                            gradient: AppColors.heroGradient,
+                            borderRadius: BorderRadius.circular(24),
+                            boxShadow: [
+                              BoxShadow(
+                                color: primary.withOpacity(0.3), 
+                                blurRadius: 20, 
+                                offset: const Offset(0, 8)
+                              )
+                            ],
                           ),
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [BoxShadow(color: primary.withOpacity(0.3), blurRadius: 16, offset: const Offset(0, 6))],
+                          child: const Icon(Icons.flash_on_rounded, size: 40, color: Colors.white),
                         ),
-                        child: const Icon(Icons.receipt_long_rounded, size: 36, color: Colors.white),
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                    Text('Sparks Invoice', textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 26, fontWeight: FontWeight.w900, letterSpacing: -0.5, color: onSurface)),
-                    const SizedBox(height: 6),
-                    Text('Sign in to your account', textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 14, color: subColor)),
-                    const SizedBox(height: 36),
+                      const SizedBox(height: 24),
+                      Text('Sparks Invoice', textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, letterSpacing: -1.0, color: onSurface)),
+                      const SizedBox(height: 8),
+                      Text('Premium Invoicing for Professionals', textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 14, color: subColor, fontWeight: FontWeight.w500)),
+                      const SizedBox(height: 48),
 
-                    // Error banner
-                    if (_error != null) ...[
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        margin: const EdgeInsets.only(bottom: 16),
-                        decoration: BoxDecoration(
-                          color: AppColors.danger.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppColors.danger.withOpacity(0.3)),
-                        ),
-                        child: Row(children: [
-                          const Icon(Icons.error_outline, color: AppColors.danger, size: 18),
-                          const SizedBox(width: 10),
-                          Expanded(child: Text(_error!, style: const TextStyle(color: AppColors.danger, fontSize: 13))),
-                          GestureDetector(
-                            onTap: () => setState(() => _error = null),
-                            child: const Icon(Icons.close, color: AppColors.danger, size: 16),
+                      // Error banner
+                      if (_error != null) ...[
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          margin: const EdgeInsets.only(bottom: 24),
+                          decoration: BoxDecoration(
+                            color: AppColors.danger.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(16),
                           ),
-                        ]),
-                      ),
-                    ],
+                          child: Row(children: [
+                            const Icon(Icons.error_outline_rounded, color: AppColors.danger, size: 20),
+                            const SizedBox(width: 12),
+                            Expanded(child: Text(_error!, style: const TextStyle(color: AppColors.danger, fontSize: 13, fontWeight: FontWeight.bold))),
+                            GestureDetector(
+                              onTap: () => setState(() => _error = null),
+                              child: const Icon(Icons.close_rounded, color: AppColors.danger, size: 18),
+                            ),
+                          ]),
+                        ),
+                      ],
 
-                    // Email field
-                    TextFormField(
-                      controller: _emailCtrl,
-                      keyboardType: TextInputType.emailAddress,
-                      textInputAction: TextInputAction.next,
-                      decoration: const InputDecoration(
-                        labelText: 'Email Address',
-                        prefixIcon: Icon(Icons.email_outlined),
+                      // Email field
+                      TextFormField(
+                        controller: _emailCtrl,
+                        keyboardType: TextInputType.emailAddress,
+                        textInputAction: TextInputAction.next,
+                        decoration: const InputDecoration(
+                          labelText: 'Email Address',
+                          prefixIcon: Icon(Icons.email_rounded),
+                          hintText: 'name@company.com',
+                        ),
+                        validator: (v) {
+                          if (v == null || v.trim().isEmpty) return 'Email is required';
+                          if (!RegExp(r'^[\w.-]+@[\w.-]+\.\w+$').hasMatch(v.trim())) return 'Invalid email format';
+                          return null;
+                        },
                       ),
-                      validator: (v) {
-                        if (v == null || v.trim().isEmpty) return 'Email is required';
-                        if (!RegExp(r'^[\w.-]+@[\w.-]+\.\w+$').hasMatch(v.trim())) return 'Invalid email format';
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 14),
+                      const SizedBox(height: 16),
 
-                    // Password field
-                    TextFormField(
-                      controller: _passCtrl,
-                      obscureText: _obscure,
-                      textInputAction: TextInputAction.done,
-                      onFieldSubmitted: (_) => _login(),
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        prefixIcon: const Icon(Icons.lock_outline),
-                        suffixIcon: IconButton(
-                          icon: Icon(_obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined),
-                          onPressed: () => setState(() => _obscure = !_obscure),
+                      // Password field
+                      TextFormField(
+                        controller: _passCtrl,
+                        obscureText: _obscure,
+                        textInputAction: TextInputAction.done,
+                        onFieldSubmitted: (_) => _login(),
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          prefixIcon: const Icon(Icons.lock_rounded),
+                          suffixIcon: IconButton(
+                            icon: Icon(_obscure ? Icons.visibility_off_rounded : Icons.visibility_rounded),
+                            onPressed: () => setState(() => _obscure = !_obscure),
+                          ),
+                        ),
+                        validator: (v) {
+                          if (v == null || v.trim().isEmpty) return 'Password is required';
+                          if (v.length < 6) return 'Password must be at least 6 characters';
+                          return null;
+                        },
+                      ),
+
+                      // Forgot password
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: _loading ? null : _forgotPassword,
+                          child: Text('Forgot Password?', style: TextStyle(color: primary, fontSize: 13, fontWeight: FontWeight.bold)),
                         ),
                       ),
-                      validator: (v) {
-                        if (v == null || v.trim().isEmpty) return 'Password is required';
-                        if (v.length < 6) return 'Password must be at least 6 characters';
-                        return null;
-                      },
-                    ),
+                      const SizedBox(height: 16),
 
-                    // Forgot password
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: _loading ? null : _forgotPassword,
-                        child: Text('Forgot Password?', style: TextStyle(color: primary, fontSize: 13)),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-
-                    // Buttons
-                    if (_loading)
-                      Center(child: CircularProgressIndicator(color: primary))
-                    else ...[
-                      ElevatedButton(
-                        onPressed: _login,
-                        child: const Text('Login'),
-                      ),
-                      const SizedBox(height: 12),
-                      OutlinedButton(
-                        onPressed: _signup,
-                        child: const Text('Create Account'),
-                      ),
+                      // Buttons
+                      if (_loading)
+                        Center(child: CircularProgressIndicator(color: primary))
+                      else ...[
+                        ElevatedButton(
+                          onPressed: _login,
+                          child: const Text('Sign In'),
+                        ),
+                        const SizedBox(height: 16),
+                        OutlinedButton(
+                          onPressed: _signup,
+                          child: const Text('Create New Account'),
+                        ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ),
       ),
     );
   }

@@ -262,8 +262,8 @@ class _InvoiceCreateScreenState extends State<InvoiceCreateScreen> {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             leading: Container(
               padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(color: AppColors.accent.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
-              child: const Icon(Icons.share_rounded, color: AppColors.accent),
+              decoration: BoxDecoration(color: AppColors.primary.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
+              child: const Icon(Icons.share_rounded, color: AppColors.primary),
             ),
             title: const Text('Share via WhatsApp / Email', style: TextStyle(fontWeight: FontWeight.w600)),
             subtitle: const Text('Send PDF to client'),
@@ -310,8 +310,8 @@ class _InvoiceCreateScreenState extends State<InvoiceCreateScreen> {
           if (_step == 5 && !_isSaving)
             TextButton.icon(
               onPressed: () => _saveInvoice(),
-              icon: const Icon(Icons.check_rounded, color: AppColors.accent, size: 20),
-              label: const Text('Save', style: TextStyle(color: AppColors.accent, fontWeight: FontWeight.bold)),
+              icon: const Icon(Icons.check_rounded, color: AppColors.primary, size: 20),
+              label: const Text('Save', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
             ),
         ],
         bottom: PreferredSize(
@@ -365,23 +365,39 @@ class _InvoiceCreateScreenState extends State<InvoiceCreateScreen> {
             label: const Text('Add New Client'),
           ),
           if (_selectedClient != null) ...[
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(color: Colors.indigo.withOpacity(0.05), borderRadius: BorderRadius.circular(12)),
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                color: AppColors.darkBg, 
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: AppColors.primary.withOpacity(0.2), width: 1),
+              ),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Row(children: [
-                  CircleAvatar(backgroundColor: Colors.indigo.withOpacity(0.1), child: Text(_selectedClient!.name[0], style: const TextStyle(color: Colors.indigo, fontWeight: FontWeight.bold))),
-                  const SizedBox(width: 12),
+                  CircleAvatar(
+                    radius: 24,
+                    backgroundColor: AppColors.primary.withOpacity(0.1), 
+                    child: Text(_selectedClient!.name[0], style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 18))
+                  ),
+                  const SizedBox(width: 14),
                   Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text(_selectedClient!.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                    if (_selectedClient!.contactPerson.isNotEmpty) Text(_selectedClient!.contactPerson, style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
-                    Text(_selectedClient!.email, style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+                    Text(_selectedClient!.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white)),
+                    if (_selectedClient!.contactPerson.isNotEmpty) Text(_selectedClient!.contactPerson, style: const TextStyle(color: AppColors.textSecondary, fontSize: 13)),
+                    Text(_selectedClient!.email, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
                   ])),
                 ]),
                 if (_selectedClient!.billingAddress.isNotEmpty) ...[
+                  const SizedBox(height: 12),
+                  const Divider(color: Colors.white10),
                   const SizedBox(height: 8),
-                  Text('${_selectedClient!.billingAddress}, ${_selectedClient!.city}', style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+                  Row(
+                    children: [
+                      const Icon(Icons.location_on_rounded, size: 14, color: AppColors.textMuted),
+                      const SizedBox(width: 8),
+                      Expanded(child: Text('${_selectedClient!.billingAddress}, ${_selectedClient!.city}', style: const TextStyle(color: AppColors.textSecondary, fontSize: 12))),
+                    ],
+                  ),
                 ],
               ]),
             ),
@@ -523,9 +539,9 @@ class _InvoiceCreateScreenState extends State<InvoiceCreateScreen> {
           Row(children: [
             const Text('Type:'),
             const SizedBox(width: 12),
-            ChoiceChip(label: const Text('Flat'), selected: _discountType == DiscountType.flat, onSelected: (_) => setState(() => _discountType = DiscountType.flat), selectedColor: AppColors.accent.withOpacity(0.2)),
+            ChoiceChip(label: const Text('Flat'), selected: _discountType == DiscountType.flat, onSelected: (_) => setState(() => _discountType = DiscountType.flat), selectedColor: AppColors.primary.withOpacity(0.2)),
             const SizedBox(width: 8),
-            ChoiceChip(label: const Text('%'), selected: _discountType == DiscountType.percentage, onSelected: (_) => setState(() => _discountType = DiscountType.percentage), selectedColor: AppColors.accent.withOpacity(0.2)),
+            ChoiceChip(label: const Text('%'), selected: _discountType == DiscountType.percentage, onSelected: (_) => setState(() => _discountType = DiscountType.percentage), selectedColor: AppColors.primary.withOpacity(0.2)),
           ]),
           const SizedBox(height: 12),
           TextFormField(
@@ -554,9 +570,9 @@ class _InvoiceCreateScreenState extends State<InvoiceCreateScreen> {
               Row(children: [
                 const Text('Tax Type:'),
                 const SizedBox(width: 12),
-                ChoiceChip(label: const Text('IGST'), selected: _taxType == TaxType.igst, onSelected: (_) => setState(() { _taxType = TaxType.igst; _taxRate = 18; _taxRateCtrl.text = '18'; }), selectedColor: AppColors.accent.withOpacity(0.2)),
+                ChoiceChip(label: const Text('IGST'), selected: _taxType == TaxType.igst, onSelected: (_) => setState(() { _taxType = TaxType.igst; _taxRate = 18; _taxRateCtrl.text = '18'; }), selectedColor: AppColors.primary.withOpacity(0.2)),
                 const SizedBox(width: 8),
-                ChoiceChip(label: const Text('CGST+SGST'), selected: _taxType == TaxType.cgstSgst, onSelected: (_) => setState(() { _taxType = TaxType.cgstSgst; _taxRate = 18; _taxRateCtrl.text = '18'; }), selectedColor: AppColors.accent.withOpacity(0.2)),
+                ChoiceChip(label: const Text('CGST+SGST'), selected: _taxType == TaxType.cgstSgst, onSelected: (_) => setState(() { _taxType = TaxType.cgstSgst; _taxRate = 18; _taxRateCtrl.text = '18'; }), selectedColor: AppColors.primary.withOpacity(0.2)),
               ]),
               const SizedBox(height: 12),
               if (_taxType == TaxType.igst)
@@ -592,15 +608,15 @@ class _InvoiceCreateScreenState extends State<InvoiceCreateScreen> {
         ])),
         const SizedBox(height: 16),
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            gradient: const LinearGradient(colors: [AppColors.accent, AppColors.accentLight]),
-            borderRadius: BorderRadius.circular(14),
-            boxShadow: [BoxShadow(color: AppColors.accent.withOpacity(0.35), blurRadius: 12, offset: const Offset(0, 4))],
+            gradient: AppColors.heroGradient,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [BoxShadow(color: AppColors.primary.withOpacity(0.3), blurRadius: 15, offset: const Offset(0, 8))],
           ),
           child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            const Text('Grand Total', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
-            Text('$_sym${_fmt(_total)}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 22)),
+            const Text('Grand Total', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 18, letterSpacing: -0.5)),
+            Text('$_sym${_fmt(_total)}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 26, letterSpacing: -1.0)),
           ]),
         ),
       ]),
@@ -629,75 +645,159 @@ class _InvoiceCreateScreenState extends State<InvoiceCreateScreen> {
       padding: const EdgeInsets.all(16),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(color: Theme.of(context).cardTheme.color, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 10)]),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                const Text('INVOICE', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.accent, letterSpacing: 2)),
-                Text(_invoiceNumber, style: const TextStyle(color: AppColors.textSecondary)),
-              ]),
-              Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: AppColors.accent.withOpacity(0.1), borderRadius: BorderRadius.circular(10)), child: const Icon(Icons.receipt_long_rounded, color: AppColors.accent, size: 28)),
-            ]),
-            const Divider(height: 28),
-            if (_selectedClient != null) ...[
-              const Text('BILL TO', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey, letterSpacing: 1)),
-              const SizedBox(height: 6),
-              Text(_selectedClient!.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-              if (_selectedClient!.contactPerson.isNotEmpty) Text(_selectedClient!.contactPerson, style: TextStyle(color: Colors.grey.shade600, fontSize: 13)),
-              Text(_selectedClient!.email, style: TextStyle(color: Colors.grey.shade600, fontSize: 13)),
-              if (_selectedClient!.billingAddress.isNotEmpty) Text('${_selectedClient!.billingAddress}, ${_selectedClient!.city}', style: TextStyle(color: Colors.grey.shade600, fontSize: 13)),
-              const SizedBox(height: 16),
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: Theme.of(context).cardTheme.color, 
+            borderRadius: BorderRadius.circular(24), 
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1), 
+                blurRadius: 15,
+                offset: const Offset(0, 8),
+              )
             ],
+          ),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    gradient: AppColors.heroGradient,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.flash_on_rounded, color: Colors.white, size: 20),
+                ),
+                const SizedBox(width: 12),
+                const Text('Sparks', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, letterSpacing: -0.5)),
+              ]),
+              Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+                Text('INVOICE', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Theme.of(context).colorScheme.primary, letterSpacing: 2)),
+                const SizedBox(height: 4),
+                Text(_invoiceNumber, style: const TextStyle(color: AppColors.textSecondary, fontWeight: FontWeight.bold)),
+              ]),
+            ]),
+            const Divider(height: 40, color: Colors.white10),
+            // ── FROM / TO SECTION ──────────────────────────────────────
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // FROM (Company) — LEFT
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('From:', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.textMuted, letterSpacing: 1.2)),
+                      const SizedBox(height: 8),
+                      const Text('Sparks', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.white)),
+                      const SizedBox(height: 4),
+                      const Text('Welbuilt AI Solutions Pvt Ltd', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                      const Text('India', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                      const Text('contactsparksai@gmail.com', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 24),
+                // TO (Client) — RIGHT BLOCK (label right, content left)
+                if (_selectedClient != null)
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'To:',
+                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          _selectedClient!.name,
+                          softWrap: true,
+                          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Colors.white),
+                        ),
+                        const SizedBox(height: 4),
+                        if (_selectedClient!.contactPerson.isNotEmpty) ...[
+                          Text(_selectedClient!.contactPerson, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                          const SizedBox(height: 4),
+                        ],
+                        if (_selectedClient!.phone.isNotEmpty) ...[
+                          Text('Phone: ${_selectedClient!.phone}', style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                          const SizedBox(height: 4),
+                        ],
+                        Text('Email: ${_selectedClient!.email}', style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                        if (_selectedClient!.billingAddress.isNotEmpty) ...[
+                          const SizedBox(height: 4),
+                          Text(
+                            '${_selectedClient!.billingAddress}${_selectedClient!.city.isNotEmpty ? ", ${_selectedClient!.city}" : ""}',
+                            style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
+                            softWrap: true,
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 24),
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               _infoCol('Invoice Date', fmt.format(_invoiceDate)),
               _infoCol('Due Date', fmt.format(_dueDate)),
               _infoCol('Currency', _currency),
             ]),
-            const Divider(height: 28),
-            const Text('ITEMS', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey, letterSpacing: 1)),
-            const SizedBox(height: 8),
+            const Divider(height: 40, color: Colors.white10),
+            const Text('LINE ITEMS', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.textMuted, letterSpacing: 1.5)),
+            const SizedBox(height: 16),
             ..._items.map((item) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 6),
+              padding: const EdgeInsets.symmetric(vertical: 8),
               child: Row(children: [
                 Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(item.name, style: const TextStyle(fontWeight: FontWeight.w600)),
-                  Text('${item.quantity} x $_sym${_fmt(item.price)}', style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+                  Text(item.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.white)),
+                  const SizedBox(height: 2),
+                  Text('${item.quantity} x $_sym${_fmt(item.price)}', style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
                 ])),
-                Text('$_sym${_fmt(item.subtotal)}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text('$_sym${_fmt(item.subtotal)}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.white)),
               ]),
             )),
-            const Divider(height: 20),
+            const Divider(height: 32, color: Colors.white10),
             _previewRow('Subtotal', _subtotal),
             if (_discountValue > 0) _previewRow('Discount', _discountAmount, isNeg: true),
             if (_taxApplicable) _previewRow('Tax (${_taxRate.toStringAsFixed(0)}%)', _taxAmount),
-            const Divider(height: 16),
+            const SizedBox(height: 12),
             _previewRow('Total', _total, isBold: true),
             if (_notesCtrl.text.isNotEmpty) ...[
-              const SizedBox(height: 16),
-              Text('Notes: ${_notesCtrl.text}', style: TextStyle(color: Colors.grey.shade600, fontSize: 12, fontStyle: FontStyle.italic)),
+              const SizedBox(height: 24),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(color: AppColors.darkBg, borderRadius: BorderRadius.circular(12)),
+                child: Text('Note: ${_notesCtrl.text}', style: const TextStyle(color: AppColors.textSecondary, fontSize: 12, fontStyle: FontStyle.italic)),
+              ),
             ],
           ]),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 24),
         if (_isSaving)
-          const Center(child: CircularProgressIndicator(color: AppColors.accent))
+          const Center(child: CircularProgressIndicator(color: AppColors.primary))
         else
           Row(children: [
             Expanded(child: OutlinedButton.icon(
               onPressed: _shareInvoice,
               icon: const Icon(Icons.share_rounded, size: 18),
-              style: OutlinedButton.styleFrom(minimumSize: const Size(0, 52), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-              label: const Text('Share'),
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size(0, 56), 
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              ),
+              label: const Text('Share PDF', style: TextStyle(fontWeight: FontWeight.bold)),
             )),
-            const SizedBox(width: 12),
+            const SizedBox(width: 16),
             Expanded(child: ElevatedButton(
               onPressed: () => _saveInvoice(), 
-              style: ElevatedButton.styleFrom(minimumSize: const Size(0, 52), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-              child: const Text('Generate Invoice')
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(0, 56), 
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              ),
+              child: const Text('Finalize Invoice', style: TextStyle(fontWeight: FontWeight.bold))
             )),
           ]),
-        const SizedBox(height: 24),
+        const SizedBox(height: 32),
       ]),
     );
   }
@@ -723,35 +823,79 @@ class _InvoiceCreateScreenState extends State<InvoiceCreateScreen> {
 
   Widget _card(String title, IconData icon, Widget child) {
     return Container(
-      decoration: BoxDecoration(color: Theme.of(context).cardTheme.color, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8, offset: const Offset(0, 2))]),
-      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardTheme.color, 
+        borderRadius: BorderRadius.circular(24), 
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1), 
+            blurRadius: 10, 
+            offset: const Offset(0, 4)
+          )
+        ],
+      ),
+      padding: const EdgeInsets.all(20),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: [Icon(icon, color: Colors.indigo, size: 18), const SizedBox(width: 8), Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14))]),
-        const SizedBox(height: 14),
+        Row(children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: AppColors.primary, size: 18),
+          ),
+          const SizedBox(width: 12),
+          Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, letterSpacing: -0.5)),
+        ]),
+        const SizedBox(height: 20),
         child,
       ]),
     );
   }
 
   Widget _dateTile(String label, DateTime date, ValueChanged<DateTime> onPick) {
+    final primary = Theme.of(context).colorScheme.primary;
     return InkWell(
       onTap: () async {
-        final picked = await showDatePicker(context: context, initialDate: date, firstDate: DateTime(2020), lastDate: DateTime(2030));
+        final picked = await showDatePicker(
+          context: context, 
+          initialDate: date, 
+          firstDate: DateTime(2020), 
+          lastDate: DateTime(2030),
+          builder: (context, child) => Theme(
+            data: Theme.of(context).copyWith(
+              colorScheme: Theme.of(context).colorScheme.copyWith(
+                surface: AppColors.darkSurface,
+                onSurface: Colors.white,
+              ),
+            ),
+            child: child!,
+          ),
+        );
         if (picked != null) onPick(picked);
       },
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(16),
       child: Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(12)),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppColors.darkBg,
+          borderRadius: BorderRadius.circular(16),
+        ),
         child: Row(children: [
-          const Icon(Icons.calendar_today_outlined, size: 18, color: Colors.indigo),
-          const SizedBox(width: 12),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(color: primary.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
+            child: Icon(Icons.calendar_today_rounded, size: 18, color: primary),
+          ),
+          const SizedBox(width: 16),
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(label, style: TextStyle(color: Colors.grey.shade600, fontSize: 11)),
-            Text(DateFormat('dd MMM yyyy').format(date), style: const TextStyle(fontWeight: FontWeight.bold)),
+            Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 4),
+            Text(DateFormat('dd MMM yyyy').format(date), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
           ]),
           const Spacer(),
-          const Icon(Icons.edit_outlined, size: 16, color: Colors.grey),
+          Icon(Icons.edit_rounded, size: 18, color: AppColors.textMuted.withOpacity(0.5)),
         ]),
       ),
     );
@@ -806,29 +950,34 @@ class _StepIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
     return SizedBox(
-      height: 56,
+      height: 60,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         itemCount: steps.length,
         itemBuilder: (_, i) {
           final done = i < current;
           final active = i == current;
           return GestureDetector(
             onTap: () => onTap(i),
-            child: Container(
-              margin: const EdgeInsets.only(right: 8),
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              margin: const EdgeInsets.only(right: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: active ? Colors.indigo : done ? Colors.green.withOpacity(0.15) : Colors.grey.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(20),
+                color: active ? primary : done ? AppColors.success.withOpacity(0.1) : AppColors.darkSurface,
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: active ? [BoxShadow(color: primary.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 4))] : null,
               ),
               child: Row(children: [
-                if (done) const Icon(Icons.check_circle_rounded, size: 14, color: Colors.green)
-                else Text('${i + 1}', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: active ? Colors.white : Colors.grey)),
-                const SizedBox(width: 6),
-                Text(steps[i], style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: active ? Colors.white : done ? Colors.green : Colors.grey)),
+                if (done) 
+                  const Icon(Icons.check_circle_rounded, size: 16, color: AppColors.success)
+                else 
+                  Text('${i + 1}', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: active ? Colors.white : AppColors.textMuted)),
+                const SizedBox(width: 8),
+                Text(steps[i], style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: active ? Colors.white : done ? AppColors.success : AppColors.textMuted)),
               ]),
             ),
           );

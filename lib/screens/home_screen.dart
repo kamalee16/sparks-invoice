@@ -1,4 +1,4 @@
-﻿import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 import '../theme/app_colors.dart';
@@ -9,20 +9,22 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardBg = isDark ? AppColors.darkCard : AppColors.lightCard;
-    final border = isDark ? AppColors.darkCardBorder : AppColors.lightBorder;
+    final cardBg = AppColors.darkCard;
+    final primary = Theme.of(context).colorScheme.primary;
 
     return Scaffold(
       appBar: AppBar(
         title: Row(children: [
           Container(
-            padding: const EdgeInsets.all(7),
-            decoration: BoxDecoration(color: AppColors.accent.withOpacity(0.15), borderRadius: BorderRadius.circular(10)),
-            child: const Icon(Icons.receipt_long_rounded, color: AppColors.accent, size: 18),
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              gradient: AppColors.heroGradient,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Icon(Icons.flash_on_rounded, color: Colors.white, size: 18),
           ),
-          const SizedBox(width: 10),
-          const Text('Sparks Invoice'),
+          const SizedBox(width: 12),
+          const Text('Sparks Invoice', style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: -0.5)),
         ]),
         actions: [_ProfileAvatar()],
       ),
@@ -31,74 +33,87 @@ class HomeScreen extends StatelessWidget {
         child: Column(children: [
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.fromLTRB(28, 48, 28, 48),
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFF1A1A24), Color(0xFF2A1A0E)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+            padding: const EdgeInsets.fromLTRB(32, 56, 32, 64),
+            decoration: BoxDecoration(
+              color: AppColors.darkBg,
+              image: DecorationImage(
+                image: const AssetImage('assets/glow.png'),
+                fit: BoxFit.cover,
+                opacity: 0.1,
+                onError: (_, __) => {},
               ),
             ),
             child: Column(children: [
               Container(
-                padding: const EdgeInsets.all(18),
+                padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: AppColors.accent.withOpacity(0.15),
+                  gradient: AppColors.heroGradient,
                   shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.accent.withOpacity(0.3), width: 1.5),
+                  boxShadow: [
+                    BoxShadow(
+                      color: primary.withOpacity(0.3), 
+                      blurRadius: 30, 
+                      spreadRadius: 5,
+                    )
+                  ],
                 ),
-                child: const Icon(Icons.receipt_long_rounded, size: 48, color: AppColors.accent),
+                child: const Icon(Icons.flash_on_rounded, size: 56, color: Colors.white),
               ),
-              const SizedBox(height: 24),
-              const Text('Sparks Invoice', textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white, letterSpacing: -0.5)),
-              const SizedBox(height: 8),
-              const Text('Company Invoice Generator Mobile App', textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14, color: AppColors.textSecondary, fontWeight: FontWeight.w500)),
-              const SizedBox(height: 10),
-              const Text('Create, manage, and share professional invoices with ease.', textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 13, color: AppColors.textMuted)),
               const SizedBox(height: 32),
+              const Text('Sparks Invoice', textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 36, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: -1.0)),
+              const SizedBox(height: 12),
+              const Text('Premium Invoicing for Professionals', textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16, color: AppColors.textSecondary, fontWeight: FontWeight.w600)),
+              const SizedBox(height: 12),
+              const Text('Create, manage, and share professional invoices with ease.', textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 14, color: AppColors.textMuted)),
+              const SizedBox(height: 48),
               GestureDetector(
                 onTap: () => Navigator.pushNamed(context, '/create-invoice'),
                 child: Container(
-                  width: double.infinity, height: 54,
+                  width: double.infinity, height: 60,
                   decoration: BoxDecoration(
-                    color: AppColors.accent,
-                    borderRadius: BorderRadius.circular(14),
-                    boxShadow: [BoxShadow(color: AppColors.accent.withOpacity(0.4), blurRadius: 16, offset: const Offset(0, 6))],
+                    gradient: AppColors.heroGradient,
+                    borderRadius: BorderRadius.circular(18),
+                    boxShadow: [BoxShadow(color: primary.withOpacity(0.4), blurRadius: 20, offset: const Offset(0, 8))],
                   ),
                   child: const Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    Icon(Icons.add_rounded, color: Colors.white, size: 22),
-                    SizedBox(width: 10),
-                    Text('Create Invoice', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+                    Icon(Icons.add_rounded, color: Colors.white, size: 24),
+                    SizedBox(width: 12),
+                    Text('Create New Invoice', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
                   ]),
                 ),
               ),
             ]),
           ),
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(24),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('QUICK ACCESS', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: isDark ? AppColors.textSecondary : const Color(0xFF6B7280), letterSpacing: 1.5)),
-              const SizedBox(height: 12),
+              const Text('QUICK ACCESS', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.textMuted, letterSpacing: 2.0)),
+              const SizedBox(height: 16),
               Row(children: [
-                Expanded(child: _QuickBtn(label: 'Dashboard', icon: Icons.dashboard_outlined, onTap: () => Navigator.pushNamed(context, '/dashboard'), cardBg: cardBg, border: border)),
-                const SizedBox(width: 10),
-                Expanded(child: _QuickBtn(label: 'Clients', icon: Icons.people_outline_rounded, onTap: () => Navigator.pushNamed(context, '/clients'), cardBg: cardBg, border: border)),
-                const SizedBox(width: 10),
-                Expanded(child: _QuickBtn(label: 'Invoices', icon: Icons.receipt_long_outlined, onTap: () => Navigator.pushNamed(context, '/invoices'), cardBg: cardBg, border: border)),
+                Expanded(child: _QuickBtn(label: 'Dashboard', icon: Icons.grid_view_rounded, onTap: () => Navigator.pushNamed(context, '/dashboard'), cardBg: cardBg)),
+                const SizedBox(width: 12),
+                Expanded(child: _QuickBtn(label: 'Clients', icon: Icons.people_alt_rounded, onTap: () => Navigator.pushNamed(context, '/clients'), cardBg: cardBg)),
+                const SizedBox(width: 12),
+                Expanded(child: _QuickBtn(label: 'Invoices', icon: Icons.receipt_long_rounded, onTap: () => Navigator.pushNamed(context, '/invoices'), cardBg: cardBg)),
               ]),
-              const SizedBox(height: 28),
-              Text('FEATURES', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: isDark ? AppColors.textSecondary : const Color(0xFF6B7280), letterSpacing: 1.5)),
+              const SizedBox(height: 32),
+              const Text('FEATURES', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.textMuted, letterSpacing: 2.0)),
+              const SizedBox(height: 16),
+              _FeatureCard(icon: Icons.speed_rounded, color: AppColors.primary, title: 'Fast & Easy', subtitle: 'Generate professional invoices in seconds', cardBg: cardBg),
               const SizedBox(height: 12),
-              _FeatureCard(icon: Icons.speed_rounded, color: AppColors.accent, title: 'Fast & Easy', subtitle: 'Generate professional invoices in seconds', cardBg: cardBg, border: border),
-              const SizedBox(height: 10),
-              _FeatureCard(icon: Icons.picture_as_pdf_rounded, color: AppColors.danger, title: 'PDF Export', subtitle: 'Download and share invoices as PDF', cardBg: cardBg, border: border),
-              const SizedBox(height: 10),
-              _FeatureCard(icon: Icons.people_alt_rounded, color: AppColors.success, title: 'Client Management', subtitle: 'Manage all your clients in one place', cardBg: cardBg, border: border),
-              const SizedBox(height: 10),
-              _FeatureCard(icon: Icons.bar_chart_rounded, color: AppColors.warning, title: 'Analytics', subtitle: 'Track revenue, pending and overdue amounts', cardBg: cardBg, border: border),
+              _FeatureCard(icon: Icons.picture_as_pdf_rounded, color: AppColors.danger, title: 'PDF Export', subtitle: 'Download and share invoices as PDF', cardBg: cardBg),
+              const SizedBox(height: 12),
+              _FeatureCard(icon: Icons.people_alt_rounded, color: AppColors.success, title: 'Client Management', subtitle: 'Manage all your clients in one place', cardBg: cardBg),
+            ]),
+          ),
+        ]),
+      ),
+    );
+  }
+}
               const SizedBox(height: 24),
             ]),
           ),
@@ -109,43 +124,55 @@ class HomeScreen extends StatelessWidget {
 }
 
 class _FeatureCard extends StatelessWidget {
-  final IconData icon; final Color color; final String title, subtitle; final Color cardBg, border;
-  const _FeatureCard({required this.icon, required this.color, required this.title, required this.subtitle, required this.cardBg, required this.border});
+  final IconData icon; final Color color; final String title, subtitle; final Color cardBg;
+  const _FeatureCard({required this.icon, required this.color, required this.title, required this.subtitle, required this.cardBg});
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: cardBg, borderRadius: BorderRadius.circular(14), border: Border.all(color: border)),
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: cardBg, 
+        borderRadius: BorderRadius.circular(20),
+      ),
       child: Row(children: [
-        Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: color.withOpacity(0.12), borderRadius: BorderRadius.circular(10)), child: Icon(icon, color: color, size: 20)),
-        const SizedBox(width: 14),
+        Container(
+          padding: const EdgeInsets.all(10), 
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1), 
+            borderRadius: BorderRadius.circular(12)
+          ), 
+          child: Icon(icon, color: color, size: 22)
+        ),
+        const SizedBox(width: 16),
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: isDark ? Colors.white : const Color(0xFF1A1A2E))),
-          const SizedBox(height: 2),
+          Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.white)),
+          const SizedBox(height: 4),
           Text(subtitle, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
         ])),
-        Icon(Icons.chevron_right_rounded, color: color.withOpacity(0.5), size: 18),
+        Icon(Icons.chevron_right_rounded, color: color.withOpacity(0.3), size: 20),
       ]),
     );
   }
 }
 
 class _QuickBtn extends StatelessWidget {
-  final String label; final IconData icon; final VoidCallback onTap; final Color cardBg, border;
-  const _QuickBtn({required this.label, required this.icon, required this.onTap, required this.cardBg, required this.border});
+  final String label; final IconData icon; final VoidCallback onTap; final Color cardBg;
+  const _QuickBtn({required this.label, required this.icon, required this.onTap, required this.cardBg});
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primary = Theme.of(context).colorScheme.primary;
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        decoration: BoxDecoration(color: cardBg, borderRadius: BorderRadius.circular(14), border: Border.all(color: border)),
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        decoration: BoxDecoration(
+          color: cardBg, 
+          borderRadius: BorderRadius.circular(20),
+        ),
         child: Column(children: [
-          Icon(icon, color: AppColors.accent, size: 22),
-          const SizedBox(height: 6),
-          Text(label, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: isDark ? Colors.white : const Color(0xFF1A1A2E))),
+          Icon(icon, color: primary, size: 24),
+          const SizedBox(height: 8),
+          Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
         ]),
       ),
     );
@@ -162,25 +189,26 @@ class _ProfileAvatar extends StatelessWidget {
     final initial = email.isNotEmpty ? email[0].toUpperCase() : 'U';
     showModalBottomSheet(
       context: context,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      backgroundColor: AppColors.darkSurface,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (_) => Padding(
         padding: const EdgeInsets.all(24),
         child: Column(mainAxisSize: MainAxisSize.min, children: [
           Container(
-            width: 56, height: 56,
+            width: 64, height: 64,
             decoration: const BoxDecoration(
-              gradient: LinearGradient(colors: [AppColors.accent, AppColors.accentLight]),
+              gradient: AppColors.heroGradient,
               shape: BoxShape.circle,
             ),
-            child: Center(child: Text(initial, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 22))),
+            child: Center(child: Text(initial, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 24))),
           ),
-          const SizedBox(height: 12),
-          Text(email, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+          const SizedBox(height: 16),
+          Text(email, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white)),
           const SizedBox(height: 4),
           const Text('Signed in', style: TextStyle(color: AppColors.textSecondary, fontSize: 13)),
-          const SizedBox(height: 20),
-          const Divider(),
-          const SizedBox(height: 8),
+          const SizedBox(height: 24),
+          const Divider(color: Colors.white10),
+          const SizedBox(height: 12),
           ListTile(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             tileColor: AppColors.danger.withOpacity(0.08),
@@ -203,14 +231,15 @@ class _ProfileAvatar extends StatelessWidget {
     final user = FirebaseAuth.instance.currentUser;
     final email = user?.email ?? '';
     final initial = email.isNotEmpty ? email[0].toUpperCase() : 'U';
+    final primary = Theme.of(context).colorScheme.primary;
     return Padding(
       padding: const EdgeInsets.only(right: 12),
       child: GestureDetector(
         onTap: () => _show(context),
         child: CircleAvatar(
           radius: 17,
-          backgroundColor: AppColors.accent.withOpacity(0.15),
-          child: Text(initial, style: const TextStyle(color: AppColors.accent, fontWeight: FontWeight.bold, fontSize: 13)),
+          backgroundColor: primary.withOpacity(0.1),
+          child: Text(initial, style: TextStyle(color: primary, fontWeight: FontWeight.bold, fontSize: 13)),
         ),
       ),
     );

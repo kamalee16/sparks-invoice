@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'providers/theme_provider.dart';
+import 'services/company_service.dart';
 
 import 'screens/splash_screen.dart';
 import 'screens/main_screen.dart';
@@ -16,6 +17,7 @@ import 'screens/settings_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await CompanyService().init();
   runApp(
     ChangeNotifierProvider(
       create: (_) => ThemeProvider(),
@@ -33,9 +35,9 @@ class InvoiceApp extends StatelessWidget {
     return MaterialApp(
       title: 'Sparks Invoice',
       debugShowCheckedModeBanner: false,
-      theme: themeProvider.light,
+      theme: themeProvider.dark, // Always use dark theme
       darkTheme: themeProvider.dark,
-      themeMode: themeProvider.isDark ? ThemeMode.dark : ThemeMode.light,
+      themeMode: ThemeMode.dark, // Force dark mode
       // SplashScreen handles auth check and routing
       home: const SplashScreen(),
       routes: {

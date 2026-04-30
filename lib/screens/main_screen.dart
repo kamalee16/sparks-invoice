@@ -27,29 +27,44 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? const Color(0xFF161B22) : Colors.white;
-    final border = isDark ? const Color(0xFF21262D) : const Color(0xFFE2E8F0);
-    final selected = isDark ? const Color(0xFF00C9A7) : AppColors.primary;
-    final unselected = isDark ? const Color(0xFF8B949E) : AppColors.textSecondary;
+    final primary = Theme.of(context).colorScheme.primary;
+    final unselected = AppColors.textMuted;
+    final navBg = AppColors.darkSurface;
 
     return Scaffold(
       body: IndexedStack(index: _idx, children: _screens),
       bottomNavigationBar: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: bg,
-          border: Border(top: BorderSide(color: border, width: 1)),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 8, offset: const Offset(0, -2))],
+          color: AppColors.darkBg,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2), 
+              blurRadius: 20, 
+              offset: const Offset(0, -5)
+            )
+          ],
         ),
         child: SafeArea(
           top: false,
-          child: SizedBox(
-            height: 60,
+          child: Container(
+            height: 64,
+            decoration: BoxDecoration(
+              color: navBg,
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1), 
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                )
+              ],
+            ),
             child: Row(children: [
-              _NavTab(icon: Icons.dashboard_rounded, label: 'Dashboard', active: _idx == 0, color: selected, inactive: unselected, onTap: () => setState(() => _idx = 0)),
-              _NavTab(icon: Icons.receipt_long_rounded, label: 'Invoices', active: _idx == 1, color: selected, inactive: unselected, onTap: () => setState(() => _idx = 1)),
-              _NavTab(icon: Icons.people_alt_rounded, label: 'Clients', active: _idx == 2, color: selected, inactive: unselected, onTap: () => setState(() => _idx = 2)),
-              _NavTab(icon: Icons.settings_rounded, label: 'Settings', active: _idx == 3, color: selected, inactive: unselected, onTap: () => setState(() => _idx = 3)),
+              _NavTab(icon: Icons.grid_view_rounded, label: 'Dashboard', active: _idx == 0, color: primary, inactive: unselected, onTap: () => setState(() => _idx = 0)),
+              _NavTab(icon: Icons.receipt_long_rounded, label: 'Invoices', active: _idx == 1, color: primary, inactive: unselected, onTap: () => setState(() => _idx = 1)),
+              _NavTab(icon: Icons.people_alt_rounded, label: 'Clients', active: _idx == 2, color: primary, inactive: unselected, onTap: () => setState(() => _idx = 2)),
+              _NavTab(icon: Icons.settings_rounded, label: 'Settings', active: _idx == 3, color: primary, inactive: unselected, onTap: () => setState(() => _idx = 3)),
             ]),
           ),
         ),
@@ -72,9 +87,17 @@ class _NavTab extends StatelessWidget {
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Icon(icon, size: 22, color: active ? color : inactive),
-        const SizedBox(height: 3),
-        Text(label, style: TextStyle(fontSize: 10, color: active ? color : inactive, fontWeight: active ? FontWeight.bold : FontWeight.normal)),
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          decoration: BoxDecoration(
+            color: active ? color.withOpacity(0.1) : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(icon, size: 24, color: active ? color : inactive),
+        ),
+        const SizedBox(height: 4),
+        Text(label, style: TextStyle(fontSize: 10, color: active ? color : inactive, fontWeight: active ? FontWeight.bold : FontWeight.w500)),
       ]),
     ),
   );

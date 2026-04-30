@@ -1,4 +1,4 @@
-﻿import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'line_item.dart';
 
 enum InvoiceStatus { draft, unpaid, paid, partiallyPaid, overdue, cancelled }

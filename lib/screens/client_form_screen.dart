@@ -192,24 +192,35 @@ class _ClientFormScreenState extends State<ClientFormScreen> {
             _section('Tax & Preferences', Icons.receipt_outlined, [
               _field(_gst, 'GST / Tax Number (Optional)', Icons.numbers_outlined, enabled: _isEditing),
               if (_isEditing) ...[
-                const SizedBox(height: 4),
-                const Text('Preferred Currency', style: TextStyle(fontSize: 13, color: Colors.grey)),
                 const SizedBox(height: 8),
+                const Text('Preferred Currency', style: TextStyle(fontSize: 13, color: AppColors.textSecondary, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 12),
                 Row(children: ['INR', 'USD'].map((cur) => Expanded(child: Padding(
-                  padding: const EdgeInsets.only(right: 8),
+                  padding: const EdgeInsets.only(right: 12),
                   child: ChoiceChip(
-                    label: Text(cur),
+                    label: Text(cur, style: TextStyle(fontWeight: FontWeight.bold, color: _currency == cur ? Colors.white : AppColors.textSecondary)),
                     selected: _currency == cur,
                     onSelected: (_) => setState(() => _currency = cur),
-                    selectedColor: AppColors.accent.withOpacity(0.2),
+                    selectedColor: AppColors.primary,
+                    backgroundColor: AppColors.darkBg,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                 ))).toList()),
               ] else
                 ListTile(
                   contentPadding: EdgeInsets.zero,
-                  leading: const Icon(Icons.currency_exchange_outlined, color: AppColors.accent),
-                  title: const Text('Preferred Currency'),
-                  trailing: Text(_currency, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(color: AppColors.primary.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
+                    child: const Icon(Icons.currency_exchange_rounded, color: AppColors.primary, size: 20),
+                  ),
+                  title: const Text('Preferred Currency', style: TextStyle(fontWeight: FontWeight.bold)),
+                  trailing: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(color: AppColors.primary.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
+                    child: Text(_currency, style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.primary)),
+                  ),
                 ),
             ]),
             const SizedBox(height: 16),
@@ -235,18 +246,31 @@ class _ClientFormScreenState extends State<ClientFormScreen> {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).cardTheme.color,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8, offset: const Offset(0, 2))],
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1), 
+            blurRadius: 10, 
+            offset: const Offset(0, 4)
+          )
+        ],
       ),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
-          Icon(icon, color: AppColors.accent, size: 18),
-          const SizedBox(width: 8),
-          Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: AppColors.primary, size: 18),
+          ),
+          const SizedBox(width: 12),
+          Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, letterSpacing: -0.5)),
         ]),
-        const SizedBox(height: 14),
-        ...children.map((w) => Padding(padding: const EdgeInsets.only(bottom: 12), child: w)),
+        const SizedBox(height: 20),
+        ...children.map((w) => Padding(padding: const EdgeInsets.only(bottom: 16), child: w)),
       ]),
     );
   }

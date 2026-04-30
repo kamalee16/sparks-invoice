@@ -1,39 +1,53 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // Brand — blue theme
-  static const primary    = Color(0xFF2563EB);
-  static const primaryDark = Color(0xFF1D4ED8);
-  static const primaryLight = Color(0xFF3B82F6);
-  static const accent     = Color(0xFF2563EB);
-  static const accentDark = Color(0xFF1D4ED8);
-  static const accentLight = Color(0xFF60A5FA);
+  // Brand — Glassmorphism Premium Dark Theme
+  static const darkBg      = Color(0xFF0D1117); // Exact requested background
+  static const darkSurface = Color(0xFF161B22); // Exact requested card base
+  static const darkCard    = Color(0xFF161B22);
+  static const darkInput   = Color(0xFF0D1117);
 
-  // Gradient
-  static const primaryGradientStart = Color(0xFF1E40AF);
-  static const primaryGradientEnd   = Color(0xFF3B82F6);
+  // Accent Colors (Status Based)
+  static const success = Color(0xFF00E5A8); // Revenue (Green)
+  static const warning = Color(0xFFFFA726); // Unpaid (Orange)
+  static const danger  = Color(0xFFFF5252); // Overdue (Red)
+  static const neutral = Color(0xFF7C83FD); // Neutral (Purple/Blue)
+  static const info    = Color(0xFF7C83FD);
+  static const primary = Color(0xFF00E5A8);
+  static const secondary = Color(0xFF7C83FD);
 
-  // Dark theme surfaces
-  static const darkBg         = Color(0xFF0F172A);
-  static const darkSurface    = Color(0xFF1E293B);
-  static const darkCard       = Color(0xFF1E293B);
-  static const darkCardBorder = Color(0xFF334155);
-  static const darkInput      = Color(0xFF1E293B);
+  // Glass Gradients Helper
+  static LinearGradient glassGradient(Color color) => LinearGradient(
+    colors: [
+      color.withOpacity(0.25),
+      color.withOpacity(0.10),
+    ],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
 
-  // Light theme surfaces
-  static const lightBg      = Color(0xFFF8FAFC);
-  static const lightSurface = Color(0xFFFFFFFF);
-  static const lightCard    = Color(0xFFFFFFFF);
-  static const lightBorder  = Color(0xFFE2E8F0);
+  // Premium Gradients
+  static final heroGradient = glassGradient(success);
+  static final paidGradient = glassGradient(success);
+  static final unpaidGradient = glassGradient(warning);
+  static final overdueGradient = glassGradient(danger);
+  static final countGradient = glassGradient(neutral);
+  static final outstandingGradient = glassGradient(neutral);
 
-  // Text
-  static const textPrimary   = Color(0xFF0F172A);
-  static const textSecondary = Color(0xFF64748B);
-  static const textMuted     = Color(0xFF94A3B8);
+  // Text Colors
+  static const textPrimary   = Colors.white;
+  static const textSecondary = Colors.white70;
+  static const textMuted     = Colors.white54;
 
-  // Status
-  static const success = Color(0xFF16A34A);
-  static const warning = Color(0xFFD97706);
-  static const danger  = Color(0xFFDC2626);
-  static const info    = Color(0xFF0284C7);
+  // Soft Glow Helper
+  static List<BoxShadow> glowShadow(Color color) => [
+    BoxShadow(
+      color: color.withOpacity(0.25),
+      blurRadius: 20,
+      spreadRadius: 1,
+    ),
+  ];
+
+  // Remove borders completely
+  static const darkCardBorder = Colors.transparent;
 }
