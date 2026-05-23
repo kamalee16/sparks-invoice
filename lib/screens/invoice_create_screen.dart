@@ -1,4 +1,5 @@
 ﻿import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/client.dart';
@@ -51,6 +52,7 @@ class _InvoiceCreateScreenState extends State<InvoiceCreateScreen> {
   final _taxRateCtrl = TextEditingController(text: '18');
 
   // Step 5 - Additional Info
+  final _projectNameCtrl = TextEditingController();
   final _notesCtrl = TextEditingController(text: 'Thank you for your business.');
   final _termsCtrl = TextEditingController(text: 'Payment is due within the agreed terms.');
   final _bankCtrl = TextEditingController(text: '');
@@ -63,6 +65,20 @@ class _InvoiceCreateScreenState extends State<InvoiceCreateScreen> {
     _initInvoiceNumber();
     _loadClients();
     if (widget.existingInvoice != null) _prefill(widget.existingInvoice!);
+    // Rebuild preview whenever project name changes
+    _projectNameCtrl.addListener(() { if (mounted) setState(() {}); });
+  }
+
+  @override
+  void dispose() {
+    _projectNameCtrl.dispose();
+    _notesCtrl.dispose();
+    _termsCtrl.dispose();
+    _bankCtrl.dispose();
+    _discountCtrl.dispose();
+    _taxRateCtrl.dispose();
+    _pageCtrl.dispose();
+    super.dispose();
   }
 
   Future<void> _initInvoiceNumber() async {
@@ -94,6 +110,7 @@ class _InvoiceCreateScreenState extends State<InvoiceCreateScreen> {
     _notesCtrl.text = inv.notes;
     _termsCtrl.text = inv.termsAndConditions;
     _bankCtrl.text = inv.bankDetails;
+    _projectNameCtrl.text = inv.projectName;
   }
 
   void _applyPaymentTerms(String terms) {
@@ -134,7 +151,18 @@ class _InvoiceCreateScreenState extends State<InvoiceCreateScreen> {
 
   Future<void> _saveInvoice({bool asDraft = false}) async {
     if (_selectedClient == null) return;
-    
+
+    // Guard: must be authenticated before writing to Firestore
+    if (FirebaseAuth.instance.currentUser == null) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('You must be logged in to save an invoice.', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
+      ));
+      return;
+    }
+
     print("START LOADING");
     if (!mounted) return;
     setState(() => _isSaving = true);
@@ -155,6 +183,7 @@ class _InvoiceCreateScreenState extends State<InvoiceCreateScreen> {
         date: Timestamp.fromDate(_invoiceDate),
         dueDate: Timestamp.fromDate(_dueDate),
         status: asDraft ? InvoiceStatus.draft : InvoiceStatus.unpaid,
+        projectName: _projectNameCtrl.text.trim(),
         notes: _notesCtrl.text,
         termsAndConditions: _termsCtrl.text,
         bankDetails: _bankCtrl.text,
@@ -174,9 +203,13 @@ class _InvoiceCreateScreenState extends State<InvoiceCreateScreen> {
       print("STOP LOADING");
       
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(asDraft ? 'Saved as draft.' : 'Invoice created successfully'),
-        backgroundColor: AppColors.success,
+        content: Text(
+          asDraft ? 'Saved as draft.' : 'Invoice created successfully',
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+        ),
+        backgroundColor: const Color(0xFF1E2A28),
         behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ));
 
       if (Navigator.canPop(context)) {
@@ -192,10 +225,17 @@ class _InvoiceCreateScreenState extends State<InvoiceCreateScreen> {
       if (!mounted) return;
       setState(() => _isSaving = false);
       print("STOP LOADING");
+      final isPermission = e.toString().contains('permission-denied');
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Error: ${e.toString()}'),
-        backgroundColor: Colors.red,
+        content: Text(
+          isPermission
+              ? 'Permission denied. Please check your account or contact support.'
+              : 'Error: ${e.toString()}',
+          style: const TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.red.shade400,
         behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ));
     } finally {
       if (mounted && _isSaving) {
@@ -228,6 +268,7 @@ class _InvoiceCreateScreenState extends State<InvoiceCreateScreen> {
       date: Timestamp.fromDate(_invoiceDate),
       dueDate: Timestamp.fromDate(_dueDate),
       status: InvoiceStatus.unpaid,
+      projectName: _projectNameCtrl.text.trim(),
       notes: _notesCtrl.text,
       termsAndConditions: _termsCtrl.text,
       bankDetails: _bankCtrl.text,
@@ -271,7 +312,18 @@ class _InvoiceCreateScreenState extends State<InvoiceCreateScreen> {
               Navigator.pop(context);
               final client = await ClientService().getClient(inv.clientRef.id);
               if (client != null && mounted) {
-                await PdfService().shareInvoicePdf(inv, client);
+                try {
+                  await PdfService().shareInvoicePdf(inv, client);
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text('Share failed: $e', style: const TextStyle(color: Colors.white)),
+                      backgroundColor: Colors.red.shade400,
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ));
+                  }
+                }
               }
             },
           ),
@@ -289,7 +341,18 @@ class _InvoiceCreateScreenState extends State<InvoiceCreateScreen> {
               Navigator.pop(context);
               final client = await ClientService().getClient(inv.clientRef.id);
               if (client != null && mounted) {
-                await PdfService().openInvoicePdf(inv, client);
+                try {
+                  await PdfService().openInvoicePdf(inv, client);
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text('Download failed: $e', style: const TextStyle(color: Colors.white)),
+                      backgroundColor: Colors.red.shade400,
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ));
+                  }
+                }
               }
             },
           ),
@@ -441,59 +504,51 @@ class _InvoiceCreateScreenState extends State<InvoiceCreateScreen> {
   }
 
   Widget _Step3Items() {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final listHeight = constraints.maxHeight.isInfinite
-            ? 400.0
-            : constraints.maxHeight - 80; // 80 for the button area
-        return Column(children: [
-          SizedBox(
-            height: listHeight,
-            child: _items.isEmpty
-                ? Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    Icon(Icons.add_shopping_cart_rounded, size: 64, color: Colors.grey.shade300),
-                    const SizedBox(height: 12),
-                    Text('No items yet. Tap + to add.', style: TextStyle(color: Colors.grey.shade500)),
-                  ]))
-                : ReorderableListView.builder(
-                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                    itemCount: _items.length,
-                    onReorder: (o, n) => setState(() {
-                      final item = _items.removeAt(o);
-                      _items.insert(n > o ? n - 1 : n, item);
-                    }),
-                    itemBuilder: (_, i) {
-                      final item = _items[i];
-                      return Card(
-                        key: ValueKey(i),
-                        margin: const EdgeInsets.only(bottom: 10),
-                        child: ListTile(
-                          leading: const Icon(Icons.drag_handle_rounded, color: Colors.grey),
-                          title: Text(item.name, style: const TextStyle(fontWeight: FontWeight.w600)),
-                          subtitle: Text('${item.quantity} x $_sym${_fmt(item.price)}'),
-                          trailing: Row(mainAxisSize: MainAxisSize.min, children: [
-                            Text('$_sym${_fmt(item.subtotal)}', style: const TextStyle(fontWeight: FontWeight.bold)),
-                            IconButton(
-                              icon: const Icon(Icons.delete_outline_rounded, color: Colors.red, size: 20),
-                              onPressed: () => setState(() => _items.removeAt(i)),
-                            ),
-                          ]),
+    return Column(children: [
+      Expanded(
+        child: _items.isEmpty
+            ? Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Icon(Icons.add_shopping_cart_rounded, size: 64, color: Colors.grey.shade300),
+                const SizedBox(height: 12),
+                Text('No items yet. Tap + to add.', style: TextStyle(color: Colors.grey.shade500)),
+              ]))
+            : ReorderableListView.builder(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                itemCount: _items.length,
+                onReorder: (o, n) => setState(() {
+                  final item = _items.removeAt(o);
+                  _items.insert(n > o ? n - 1 : n, item);
+                }),
+                itemBuilder: (_, i) {
+                  final item = _items[i];
+                  return Card(
+                    key: ValueKey(i),
+                    margin: const EdgeInsets.only(bottom: 10),
+                    child: ListTile(
+                      leading: const Icon(Icons.drag_handle_rounded, color: Colors.grey),
+                      title: Text(item.name, style: const TextStyle(fontWeight: FontWeight.w600), overflow: TextOverflow.ellipsis),
+                      subtitle: Text('${item.quantity} x $_sym${_fmt(item.price)}'),
+                      trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+                        Text('$_sym${_fmt(item.subtotal)}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                        IconButton(
+                          icon: const Icon(Icons.delete_outline_rounded, color: Colors.red, size: 20),
+                          onPressed: () => setState(() => _items.removeAt(i)),
                         ),
-                      );
-                    },
-                  ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: ElevatedButton.icon(
-              onPressed: _addItemDialog,
-              icon: const Icon(Icons.add_rounded),
-              label: const Text('Add Item'),
-            ),
-          ),
-        ]);
-      },
-    );
+                      ]),
+                    ),
+                  );
+                },
+              ),
+      ),
+      Padding(
+        padding: const EdgeInsets.all(16),
+        child: ElevatedButton.icon(
+          onPressed: _addItemDialog,
+          icon: const Icon(Icons.add_rounded),
+          label: const Text('Add Item'),
+        ),
+      ),
+    ]);
   }
 
   void _addItemDialog() {
@@ -533,16 +588,22 @@ class _InvoiceCreateScreenState extends State<InvoiceCreateScreen> {
 
   Widget _Step4Tax() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.only(
+        left: 16, right: 16, top: 16,
+        bottom: MediaQuery.of(context).viewInsets.bottom + 24,
+      ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         _card('Discount', Icons.discount_outlined, Column(children: [
-          Row(children: [
-            const Text('Type:'),
-            const SizedBox(width: 12),
-            ChoiceChip(label: const Text('Flat'), selected: _discountType == DiscountType.flat, onSelected: (_) => setState(() => _discountType = DiscountType.flat), selectedColor: AppColors.primary.withOpacity(0.2)),
-            const SizedBox(width: 8),
-            ChoiceChip(label: const Text('%'), selected: _discountType == DiscountType.percentage, onSelected: (_) => setState(() => _discountType = DiscountType.percentage), selectedColor: AppColors.primary.withOpacity(0.2)),
-          ]),
+          Wrap(
+            spacing: 12,
+            runSpacing: 8,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              const Text('Type:'),
+              ChoiceChip(label: const Text('Flat'), selected: _discountType == DiscountType.flat, onSelected: (_) => setState(() => _discountType = DiscountType.flat), selectedColor: AppColors.primary.withOpacity(0.2)),
+              ChoiceChip(label: const Text('%'), selected: _discountType == DiscountType.percentage, onSelected: (_) => setState(() => _discountType = DiscountType.percentage), selectedColor: AppColors.primary.withOpacity(0.2)),
+            ],
+          ),
           const SizedBox(height: 12),
           TextFormField(
             controller: _discountCtrl,
@@ -567,13 +628,16 @@ class _InvoiceCreateScreenState extends State<InvoiceCreateScreen> {
           ),
           if (_taxApplicable) ...[
             if (_currency == 'INR') ...[
-              Row(children: [
-                const Text('Tax Type:'),
-                const SizedBox(width: 12),
-                ChoiceChip(label: const Text('IGST'), selected: _taxType == TaxType.igst, onSelected: (_) => setState(() { _taxType = TaxType.igst; _taxRate = 18; _taxRateCtrl.text = '18'; }), selectedColor: AppColors.primary.withOpacity(0.2)),
-                const SizedBox(width: 8),
-                ChoiceChip(label: const Text('CGST+SGST'), selected: _taxType == TaxType.cgstSgst, onSelected: (_) => setState(() { _taxType = TaxType.cgstSgst; _taxRate = 18; _taxRateCtrl.text = '18'; }), selectedColor: AppColors.primary.withOpacity(0.2)),
-              ]),
+              Wrap(
+                spacing: 12,
+                runSpacing: 8,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  const Text('Tax Type:'),
+                  ChoiceChip(label: const Text('IGST'), selected: _taxType == TaxType.igst, onSelected: (_) => setState(() { _taxType = TaxType.igst; _taxRate = 18; _taxRateCtrl.text = '18'; }), selectedColor: AppColors.primary.withOpacity(0.2)),
+                  ChoiceChip(label: const Text('CGST+SGST'), selected: _taxType == TaxType.cgstSgst, onSelected: (_) => setState(() { _taxType = TaxType.cgstSgst; _taxRate = 18; _taxRateCtrl.text = '18'; }), selectedColor: AppColors.primary.withOpacity(0.2)),
+                ],
+              ),
               const SizedBox(height: 12),
               if (_taxType == TaxType.igst)
                 TextFormField(controller: _taxRateCtrl, decoration: const InputDecoration(labelText: 'IGST Rate (%)', prefixIcon: Icon(Icons.percent_rounded)), keyboardType: const TextInputType.numberWithOptions(decimal: true), onChanged: (v) => setState(() => _taxRate = double.tryParse(v) ?? 18))
@@ -627,6 +691,14 @@ class _InvoiceCreateScreenState extends State<InvoiceCreateScreen> {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        _card('Project Name', Icons.work_outline_rounded, TextFormField(
+          controller: _projectNameCtrl,
+          decoration: const InputDecoration(
+            hintText: 'e.g. Website Redesign, App Development...',
+            prefixIcon: Icon(Icons.folder_outlined),
+          ),
+        )),
+        const SizedBox(height: 16),
         _card('Notes / Memo', Icons.notes_outlined, TextFormField(controller: _notesCtrl, maxLines: 3, decoration: const InputDecoration(hintText: 'e.g. Thank you for your business.'))),
         const SizedBox(height: 16),
         _card('Terms & Conditions', Icons.gavel_outlined, TextFormField(controller: _termsCtrl, maxLines: 4, decoration: const InputDecoration(hintText: 'Payment terms and conditions...'))),
@@ -738,6 +810,10 @@ class _InvoiceCreateScreenState extends State<InvoiceCreateScreen> {
               ],
             ),
             const SizedBox(height: 24),
+            if (_projectNameCtrl.text.trim().isNotEmpty) ...[
+              _infoCol('Project', _projectNameCtrl.text.trim()),
+              const SizedBox(height: 12),
+            ],
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               _infoCol('Invoice Date', fmt.format(_invoiceDate)),
               _infoCol('Due Date', fmt.format(_dueDate)),
@@ -761,7 +837,7 @@ class _InvoiceCreateScreenState extends State<InvoiceCreateScreen> {
             _previewRow('Subtotal', _subtotal),
             if (_discountValue > 0) _previewRow('Discount', _discountAmount, isNeg: true),
             if (_taxApplicable) _previewRow('Tax (${_taxRate.toStringAsFixed(0)}%)', _taxAmount),
-            const SizedBox(height: 12),
+            const Divider(height: 20, color: Colors.white10),
             _previewRow('Total', _total, isBold: true),
             if (_notesCtrl.text.isNotEmpty) ...[
               const SizedBox(height: 24),
@@ -916,7 +992,7 @@ class _InvoiceCreateScreenState extends State<InvoiceCreateScreen> {
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         Text(label, style: TextStyle(fontWeight: isBold ? FontWeight.bold : FontWeight.normal, fontSize: isBold ? 16 : 14)),
-        Text('${isNeg ? "- " : ""}$_sym${_fmt(value)}', style: TextStyle(fontWeight: isBold ? FontWeight.bold : FontWeight.w600, fontSize: isBold ? 16 : 14, color: isBold ? Colors.indigo : null)),
+        Text('${isNeg ? "- " : ""}$_sym${_fmt(value)}', style: TextStyle(fontWeight: isBold ? FontWeight.bold : FontWeight.w600, fontSize: isBold ? 16 : 14, color: isBold ? const Color(0xFFFFA500) : null)),
       ]),
     );
   }

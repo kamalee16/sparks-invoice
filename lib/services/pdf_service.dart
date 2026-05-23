@@ -49,9 +49,11 @@ class PdfService {
     final sym  = invoice.currency == 'USD' ? r'$' : 'Rs.';
     final comp = company ?? Company.empty;
 
-    final logo = pw.MemoryImage(
-      (await rootBundle.load('assets/images/logo.png')).buffer.asUint8List(),
-    );
+    // Load logo from local asset for PDF invoice
+    final logoBytes = (await rootBundle.load('assets/images/logo.png'))
+        .buffer
+        .asUint8List();
+    final logoImage = pw.MemoryImage(logoBytes);
 
     // Pre-fetch address image (only used when text address is empty)
     pw.ImageProvider? addressImage;
@@ -72,12 +74,17 @@ class PdfService {
             mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
-              // Logo only — company details live in From section below
-              pw.Image(logo, height: 44),
+              // Logo image from local asset
+              pw.Image(
+                logoImage,
+                width: 185,
+                height: 65,
+                fit: pw.BoxFit.contain,
+              ),
               // INVOICE title block
               pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.end, children: [
                 pw.Text('INVOICE',
-                    style: pw.TextStyle(font: bold, fontSize: 32, color: _black, letterSpacing: 2)),
+                    style: pw.TextStyle(font: bold, fontSize: 24, color: _black, letterSpacing: 2)),
                 pw.SizedBox(height: 4),
                 pw.Text('#${invoice.invoiceNumber}', style: reg(12, color: _grey)),
               ]),
@@ -144,7 +151,7 @@ class PdfService {
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
                 _infoCol('Project Name',
-                    invoice.notes.isNotEmpty ? invoice.notes.split('\n').first : invoice.invoiceNumber,
+                    invoice.projectName,
                     reg, bld),
                 _infoCol('Invoice Date', fmt.format(invoice.date.toDate()), reg, bld),
                 _infoCol('Due Date', fmt.format(invoice.dueDate.toDate()), reg, bld),
@@ -197,21 +204,66 @@ class PdfService {
           ),
           pw.SizedBox(height: 16),
 
-          // ── TOTALS (right-aligned) ────────────────────────────────────────
+          // ── TOTALS ────────────────────────────────────────────────────────
           pw.Align(
             alignment: pw.Alignment.centerRight,
-            child: pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.end, children: [
-              _totRow('Subtotal:', '$sym${nFmt.format(invoice.subtotal)}', reg, bld),
-              if (invoice.discountValue > 0)
-                _totRow('Discount:', '- $sym${nFmt.format(invoice.discountAmount)}', reg, bld),
-              if (invoice.taxApplicable)
-                _totRow('Tax (${invoice.taxRate.toStringAsFixed(0)}%):', '$sym${nFmt.format(invoice.taxAmount)}', reg, bld),
-              pw.SizedBox(height: 4),
-              pw.Divider(color: _grey, thickness: 0.5),
-              pw.SizedBox(height: 4),
-              _totRow('Total:', '$sym${nFmt.format(invoice.total)}', reg, bld,
-                  bold: true, large: true, color: _orange),
-            ]),
+            child: pw.Container(
+              width: 250,
+              child: pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.stretch,
+                children: [
+                  // Subtotal row
+                  pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                    children: [
+                      pw.Text('Subtotal:',
+                          style: pw.TextStyle(font: regular, fontSize: 12, color: PdfColors.grey700)),
+                      pw.Text('$sym${nFmt.format(invoice.subtotal)}',
+                          style: pw.TextStyle(font: regular, fontSize: 12, color: _black)),
+                    ],
+                  ),
+                  // Discount row (conditional)
+                  if (invoice.discountValue > 0) ...[
+                    pw.SizedBox(height: 6),
+                    pw.Row(
+                      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                      children: [
+                        pw.Text('Discount:',
+                            style: pw.TextStyle(font: regular, fontSize: 12, color: PdfColors.grey700)),
+                        pw.Text('- $sym${nFmt.format(invoice.discountAmount)}',
+                            style: pw.TextStyle(font: regular, fontSize: 12, color: _black)),
+                      ],
+                    ),
+                  ],
+                  // Tax row (conditional)
+                  if (invoice.taxApplicable) ...[
+                    pw.SizedBox(height: 6),
+                    pw.Row(
+                      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                      children: [
+                        pw.Text('Tax (${invoice.taxRate.toStringAsFixed(0)}%):',
+                            style: pw.TextStyle(font: regular, fontSize: 12, color: PdfColors.grey700)),
+                        pw.Text('$sym${nFmt.format(invoice.taxAmount)}',
+                            style: pw.TextStyle(font: regular, fontSize: 12, color: _black)),
+                      ],
+                    ),
+                  ],
+                  pw.SizedBox(height: 8),
+                  pw.Divider(color: PdfColors.grey300, thickness: 0.8),
+                  pw.SizedBox(height: 8),
+                  // Total row — bold and prominent
+                  pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                    children: [
+                      pw.Text('Total:',
+                          style: pw.TextStyle(font: bold, fontSize: 16, color: _black)),
+                      pw.Text('$sym${nFmt.format(invoice.total)}',
+                          style: pw.TextStyle(font: bold, fontSize: 16, color: _orange)),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ),
           pw.SizedBox(height: 20),
 
@@ -245,7 +297,9 @@ class PdfService {
 
     final output = await getTemporaryDirectory();
     final file = File('${output.path}/invoice_${invoice.id ?? 'draft'}.pdf');
-    await file.writeAsBytes(await pdf.save());
+    final pdfBytes = await pdf.save();
+    if (pdfBytes.isEmpty) throw Exception('PDF generation produced empty file');
+    await file.writeAsBytes(pdfBytes);
     return file;
   }
 
@@ -291,18 +345,38 @@ class PdfService {
         ]),
       );
 
+  // Full-width totals row — label left, value right, clean spaceBetween alignment
+  pw.Widget _totRowFull(String label, String value,
+      pw.TextStyle Function(double, {PdfColor? color}) reg,
+      pw.TextStyle Function(double, {PdfColor? color}) bld,
+      {bool bold = false, bool large = false, PdfColor? color}) =>
+      pw.Row(
+        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+        children: [
+          pw.Text(label, style: bold ? bld(large ? 12 : 10) : reg(large ? 12 : 10)),
+          pw.Text(value, style: bold ? bld(large ? 13 : 10, color: color) : reg(large ? 13 : 10, color: color)),
+        ],
+      );
+
   // ── Public API ─────────────────────────────────────────────────────────────
 
+  /// Opens the PDF in the device's default viewer.
   Future<void> openInvoicePdf(Invoice invoice, Client client, {Company? company}) async {
     final file = await createPdfFile(invoice, client, company: company);
-    await OpenFilex.open(file.path);
+    if (!await file.exists()) throw Exception('PDF file not found at ${file.path}');
+    final result = await OpenFilex.open(file.path);
+    if (result.type != ResultType.done) {
+      throw Exception('Could not open PDF: ${result.message}');
+    }
   }
 
+  /// Shares the PDF via the system share sheet.
   Future<void> shareInvoicePdf(Invoice invoice, Client client, {Company? company}) async {
     final file = await createPdfFile(invoice, client, company: company);
+    if (!await file.exists()) throw Exception('PDF file not found at ${file.path}');
     await Share.shareXFiles(
-      [XFile(file.path)],
-      text: 'Invoice from ${company?.name ?? 'Sparks Invoice'}',
+      [XFile(file.path, mimeType: 'application/pdf')],
+      text: 'Invoice from ${company?.name.isNotEmpty == true ? company!.name : 'Sparks Invoice'}',
       subject: 'Invoice ${invoice.invoiceNumber}',
     );
   }

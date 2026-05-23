@@ -44,6 +44,7 @@ class Invoice {
   final Timestamp dueDate;
   final InvoiceStatus status;
   final double amountPaid;
+  final String projectName;
   final String notes;
   final String termsAndConditions;
   final String bankDetails;
@@ -65,6 +66,7 @@ class Invoice {
     required this.dueDate,
     required this.status,
     this.amountPaid = 0.0,
+    this.projectName = '',
     this.notes = '',
     this.termsAndConditions = '',
     this.bankDetails = '',
@@ -128,6 +130,7 @@ class Invoice {
     Timestamp? dueDate,
     InvoiceStatus? status,
     double? amountPaid,
+    String? projectName,
     String? notes,
     String? termsAndConditions,
     String? bankDetails,
@@ -149,6 +152,7 @@ class Invoice {
       dueDate: dueDate ?? this.dueDate,
       status: status ?? this.status,
       amountPaid: amountPaid ?? this.amountPaid,
+      projectName: projectName ?? this.projectName,
       notes: notes ?? this.notes,
       termsAndConditions: termsAndConditions ?? this.termsAndConditions,
       bankDetails: bankDetails ?? this.bankDetails,
@@ -171,6 +175,7 @@ class Invoice {
         'dueDate': dueDate,
         'status': status.name,
         'amountPaid': amountPaid,
+        'projectName': projectName,
         'notes': notes,
         'termsAndConditions': termsAndConditions,
         'bankDetails': bankDetails,
@@ -195,6 +200,7 @@ class Invoice {
         dueDate: d['dueDate'] ?? Timestamp.now(),
         status: InvoiceStatus.values.firstWhere((e) => e.name == d['status'], orElse: () => InvoiceStatus.unpaid),
         amountPaid: (d['amountPaid'] ?? 0.0).toDouble(),
+        projectName: d['projectName'] ?? '',
         notes: d['notes'] ?? '',
         termsAndConditions: d['termsAndConditions'] ?? '',
         bankDetails: d['bankDetails'] ?? '',

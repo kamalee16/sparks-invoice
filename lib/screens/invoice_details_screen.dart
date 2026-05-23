@@ -172,13 +172,21 @@ class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
             ),
             title: const Text('Share PDF', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
             subtitle: const Text('WhatsApp, Email, or other apps', style: TextStyle(fontSize: 12)),
-            onTap: () { 
-              Navigator.pop(context); 
-              Future.delayed(const Duration(milliseconds: 100), () {
-                _pdfSvc.shareInvoicePdf(_invoice, client, company: _company).catchError((e) {
-                  print("SHARE ERROR: $e");
-                });
-              });
+            onTap: () async {
+              Navigator.pop(context);
+              await Future.delayed(const Duration(milliseconds: 100));
+              try {
+                await _pdfSvc.shareInvoicePdf(_invoice, client, company: _company);
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Share failed: $e', style: const TextStyle(color: Colors.white)),
+                    backgroundColor: Colors.red.shade400,
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ));
+                }
+              }
             }
           ),
           const SizedBox(height: 8),
@@ -191,13 +199,21 @@ class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
             ),
             title: const Text('Download PDF', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
             subtitle: const Text('Save to your device', style: TextStyle(fontSize: 12)),
-            onTap: () { 
-              Navigator.pop(context); 
-              Future.delayed(const Duration(milliseconds: 100), () {
-                _pdfSvc.openInvoicePdf(_invoice, client, company: _company).catchError((e) {
-                  print("OPEN PDF ERROR: $e");
-                });
-              });
+            onTap: () async {
+              Navigator.pop(context);
+              await Future.delayed(const Duration(milliseconds: 100));
+              try {
+                await _pdfSvc.openInvoicePdf(_invoice, client, company: _company);
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Download failed: $e', style: const TextStyle(color: Colors.white)),
+                    backgroundColor: Colors.red.shade400,
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ));
+                }
+              }
             }
           ),
           const SizedBox(height: 12),
@@ -232,19 +248,41 @@ class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
 
           // ── Invoice header with logo ──────────────────────────────────
           _InvoiceHeader(company: _company, invoiceNumber: _invoice.invoiceNumber),
-          const SizedBox(height: 16),
+          const SizedBox(height: 18),
 
           // Status banner
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: color.withOpacity(0.1), 
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(28),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.22),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
+                ),
+                BoxShadow(
+                  color: color.withOpacity(0.04),
+                  blurRadius: 14,
+                  spreadRadius: 1,
+                ),
+              ],
             ),
             child: Row(children: [
               Container(
                 padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(color: color.withOpacity(0.15), shape: BoxShape.circle),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.15),
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: color.withOpacity(0.18),
+                      blurRadius: 10,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
                 child: Icon(_statusIcon(status), color: color, size: 24),
               ),
               const SizedBox(width: 16),
@@ -288,15 +326,15 @@ class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
                             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                           ),
                           if (_company?.legalName.isNotEmpty == true)
-                            Text(_company!.legalName, style: TextStyle(color: Colors.grey.shade600, fontSize: 12), softWrap: true),
+                            Text(_company!.legalName, style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 12), softWrap: true),
                           if (_company?.address.isNotEmpty == true)
-                            Text(_company!.address, style: TextStyle(color: Colors.grey.shade600, fontSize: 12), softWrap: true)
+                            Text(_company!.address, style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 12), softWrap: true)
                           else
-                            Text('India', style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+                            Text('India', style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 12)),
                           if (_company?.email.isNotEmpty == true)
-                            Text(_company!.email, style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+                            Text(_company!.email, style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 12)),
                           if (_company?.phone.isNotEmpty == true)
-                            Text(_company!.phone, style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+                            Text(_company!.phone, style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 12)),
                         ],
                       ),
                     ),
@@ -315,19 +353,19 @@ class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
                           ),
                           const SizedBox(height: 4),
                           if (c.contactPerson.isNotEmpty) ...[
-                            Text(c.contactPerson, style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+                            Text(c.contactPerson, style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 12)),
                             const SizedBox(height: 4),
                           ],
                           if (c.phone.isNotEmpty) ...[
-                            Text('Phone: ${c.phone}', style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+                            Text('Phone: ${c.phone}', style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 12)),
                             const SizedBox(height: 4),
                           ],
-                          Text('Email: ${c.email}', style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+                          Text('Email: ${c.email}', style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 12)),
                           if (c.billingAddress.isNotEmpty) ...[
                             const SizedBox(height: 4),
                             Text(
                               '${c.billingAddress}${c.city.isNotEmpty ? ", ${c.city}" : ""}',
-                              style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                              style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 12),
                               softWrap: true,
                             ),
                           ],
@@ -339,7 +377,7 @@ class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
               ]);
             },
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 18),
 
           // Dates
           _infoCard('DATES', [
@@ -348,8 +386,12 @@ class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
               Expanded(child: _labelValue('Due Date', fmt.format(_invoice.dueDate.toDate()), danger: status == InvoiceStatus.overdue)),
               Expanded(child: _labelValue('Terms', _invoice.paymentTerms)),
             ]),
+            if (_invoice.projectName.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              _labelValue('Project Name', _invoice.projectName),
+            ],
           ]),
-          const SizedBox(height: 16),
+          const SizedBox(height: 18),
 
           // Line items
           _infoCard('LINE ITEMS', [
@@ -358,7 +400,7 @@ class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
               child: Row(children: [
                 Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Text(item.name, style: const TextStyle(fontWeight: FontWeight.w600)),
-                  Text('${item.quantity} x $_sym${_fmt(item.price)}', style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+                  Text('${item.quantity} x $_sym${_fmt(item.price)}', style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 12)),
                 ])),
                 Text('$_sym${_fmt(item.subtotal)}', style: const TextStyle(fontWeight: FontWeight.bold)),
               ]),
@@ -372,21 +414,21 @@ class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
           ]),
 
           if (_invoice.notes.isNotEmpty) ...[
-            const SizedBox(height: 16),
-            _infoCard('NOTES', [Text(_invoice.notes, style: TextStyle(color: Colors.grey.shade700))]),
+            const SizedBox(height: 18),
+            _infoCard('NOTES', [Text(_invoice.notes, style: TextStyle(color: const Color(0xFFA0A0A0)))]),
           ],
           if (_invoice.termsAndConditions.isNotEmpty) ...[
-            const SizedBox(height: 16),
-            _infoCard('TERMS & CONDITIONS', [Text(_invoice.termsAndConditions, style: TextStyle(color: Colors.grey.shade700, fontSize: 12))]),
+            const SizedBox(height: 18),
+            _infoCard('TERMS & CONDITIONS', [Text(_invoice.termsAndConditions, style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 12))]),
           ],
           if (_invoice.bankDetails.isNotEmpty) ...[
-            const SizedBox(height: 16),
-            _infoCard('BANK DETAILS', [Text(_invoice.bankDetails, style: TextStyle(color: Colors.grey.shade700, fontSize: 12))]),
+            const SizedBox(height: 18),
+            _infoCard('BANK DETAILS', [Text(_invoice.bankDetails, style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 12))]),
           ],
 
           // Status history
           if (_invoice.statusHistory.isNotEmpty) ...[
-            const SizedBox(height: 16),
+            const SizedBox(height: 18),
             _infoCard('STATUS HISTORY', [
               ..._invoice.statusHistory.reversed.map((h) => Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4),
@@ -395,7 +437,7 @@ class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
                   const SizedBox(width: 8),
                   Text(_statusLabel(h.status), style: TextStyle(color: _statusColor(h.status), fontWeight: FontWeight.w600, fontSize: 13)),
                   const Spacer(),
-                  Text(DateFormat('dd MMM yyyy, HH:mm').format(h.changedAt), style: TextStyle(color: Colors.grey.shade500, fontSize: 11)),
+                  Text(DateFormat('dd MMM yyyy, HH:mm').format(h.changedAt), style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 11)),
                 ]),
               )),
             ]),
@@ -441,20 +483,41 @@ class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Theme.of(context).cardTheme.color, 
-        borderRadius: BorderRadius.circular(24),
+        color: const Color(0xFF232326),
+        borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1), 
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          )
+            color: Colors.black.withOpacity(0.28),
+            blurRadius: 24,
+            offset: const Offset(0, 10),
+          ),
+          BoxShadow(
+            color: const Color(0xFF00E5CC).withOpacity(0.03),
+            blurRadius: 18,
+            spreadRadius: 1,
+          ),
         ],
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text(label, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.textMuted, letterSpacing: 1.5)),
-        const SizedBox(height: 16),
-        ...children,
+        const SizedBox(height: 12),
+        // Inner content area — slightly lighter for layered depth
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: const Color(0xFF2A2A2E),
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.18),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: children),
+        ),
       ]),
     );
   }
@@ -495,7 +558,19 @@ class _InvoiceHeader extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: cardBg,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.28),
+            blurRadius: 24,
+            offset: const Offset(0, 10),
+          ),
+          BoxShadow(
+            color: const Color(0xFF00E5CC).withOpacity(0.03),
+            blurRadius: 18,
+            spreadRadius: 1,
+          ),
+        ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

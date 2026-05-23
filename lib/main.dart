@@ -16,8 +16,17 @@ import 'screens/settings_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  await CompanyService().init();
+  try {
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  } catch (e) {
+    // Firebase may already be initialized on hot restart — safe to ignore
+    debugPrint('Firebase init: $e');
+  }
+  try {
+    await CompanyService().init();
+  } catch (e) {
+    debugPrint('CompanyService init: $e');
+  }
   runApp(
     ChangeNotifierProvider(
       create: (_) => ThemeProvider(),

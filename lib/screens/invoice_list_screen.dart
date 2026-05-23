@@ -153,21 +153,26 @@ class _InvoiceListScreenState extends State<InvoiceListScreen> {
               final sym = inv.currency == 'USD' ? r'$' : 'Rs.';
               final canEdit = status == InvoiceStatus.draft || status == InvoiceStatus.unpaid;
               return Container(
-                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6), // Rule 3
+                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 9), // Rule 3
                 padding: const EdgeInsets.all(12), // Rule 3
                 decoration: BoxDecoration(
                   color: AppColors.darkCard,
-                  borderRadius: BorderRadius.circular(22),
+                  borderRadius: BorderRadius.circular(28),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.12),
-                      blurRadius: 15,
-                      offset: const Offset(0, 6),
+                      color: Colors.black.withOpacity(0.28),
+                      blurRadius: 24,
+                      offset: const Offset(0, 10),
+                    ),
+                    BoxShadow(
+                      color: const Color(0xFF00E5CC).withOpacity(0.03),
+                      blurRadius: 18,
+                      spreadRadius: 1,
                     ),
                   ],
                 ),
                 child: InkWell(
-                  borderRadius: BorderRadius.circular(22),
+                  borderRadius: BorderRadius.circular(28),
                   onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => InvoiceDetailsScreen(invoice: inv))),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Row(

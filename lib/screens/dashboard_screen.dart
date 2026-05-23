@@ -186,7 +186,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                     value: '$sym${_fmtShort(outstanding)}',
                     sub: '$outCount pending',
                     color: const Color(0xFFF5C99A),
-                    icon: Icons.pending_actions_rounded,
+                    icon: Icons.receipt_long,
                     onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => InvoiceListScreen(initialFilter: InvoiceStatus.unpaid))),
                   )),
                   const SizedBox(width: 12),
@@ -206,7 +206,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                     value: '$monthCount',
                     sub: 'invoices',
                     color: const Color(0xFFC4B5F4),
-                    icon: Icons.description_outlined,
+                    icon: Icons.calendar_month,
                     onTap: () => Navigator.pushNamed(context, '/invoices'),
                   )),
                   const SizedBox(width: 12),
@@ -215,7 +215,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                     value: '$sym${_fmtShort(totalRevenue)}',
                     sub: '$paidCount paid',
                     color: const Color(0xFF00D4B8),
-                    icon: Icons.check_circle_outline_rounded,
+                    icon: Icons.check_circle_outline,
                     onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => InvoiceListScreen(initialFilter: InvoiceStatus.paid))),
                   )),
                 ]),
@@ -298,71 +298,42 @@ class _HeaderCard extends StatelessWidget {
       padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(22),
-        gradient: const LinearGradient(
-          colors: [
-            Color(0xFF00D4B8), // bright teal
-            Color(0xFF00BFA5), // medium teal
-            Color(0xFF00796B), // deep teal
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: const Color(0xFF00BFA5), // flat solid teal — no gradient
         boxShadow: [
           BoxShadow(
-            color: Color(0xFF00D4B8).withOpacity(0.4),
-            blurRadius: 30,
-            spreadRadius: 2,
-            offset: const Offset(0, 10),
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(22),
-        child: Stack(
-          children: [
-            // Highlight glow orb — top right
-            Positioned(
-              top: -20,
-              right: -20,
-              child: Container(
-                height: 100,
-                width: 100,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.08),
-                  shape: BoxShape.circle,
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+                // Spark logo + app name branding
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset(
+                      'assets/images/spark_logo.png',
+                      width: 30,
+                      height: 30,
+                      fit: BoxFit.contain,
+                    ),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: const Text(
+                        'Sparks Invoice',
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 26,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: -0.5,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ),
-            // Second subtle orb — bottom left
-            Positioned(
-              bottom: -30,
-              left: -10,
-              child: Container(
-                height: 80,
-                width: 80,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.05),
-                  shape: BoxShape.circle,
-                ),
-              ),
-            ),
-            // Glass overlay + content
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.05),
-                borderRadius: BorderRadius.circular(22),
-              ),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-                // Icon
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(color: Colors.white.withOpacity(0.18), borderRadius: BorderRadius.circular(12)),
-                  child: const Icon(Icons.receipt_long_rounded, color: Colors.white, size: 30),
-                ),
-                const SizedBox(height: 12),
-                // App name
-                const Text('Sparks Invoice',
-                    style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w900, letterSpacing: -0.3)),
                 const SizedBox(height: 14),
                 // Revenue label
                 const Text('TOTAL REVENUE',
@@ -419,10 +390,6 @@ class _HeaderCard extends StatelessWidget {
                   )),
                 ]),
               ]),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
@@ -462,21 +429,25 @@ class _SummaryCardState extends State<_SummaryCard> {
           ),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              // Soft circle icon
+              // Circular icon container
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.25),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(widget.icon, color: Colors.white, size: 20),
+                child: Icon(widget.icon, color: Colors.white, size: 28),
               ),
-              Icon(Icons.arrow_forward_ios_rounded, size: 11, color: Colors.white.withOpacity(0.6)),
+              Icon(Icons.arrow_forward_ios, size: 14, color: Colors.white.withOpacity(0.5)),
             ]),
             const SizedBox(height: 12),
-            Text(widget.value,
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1A1A1A)),
-                maxLines: 1, overflow: TextOverflow.ellipsis),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Text(widget.value,
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1A1A1A)),
+                  maxLines: 1),
+            ),
             const SizedBox(height: 3),
             Text(widget.title, style: const TextStyle(fontSize: 12, color: Color(0xFF333333), fontWeight: FontWeight.w600)),
             Text(widget.sub,   style: TextStyle(fontSize: 10, color: const Color(0xFF1A1A1A).withOpacity(0.6), fontWeight: FontWeight.w600)),

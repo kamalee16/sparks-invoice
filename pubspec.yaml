@@ -33,10 +33,24 @@ dev_dependencies:
     sdk: flutter
 
   flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.13.1
+  image: ^4.1.7
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  # Legacy icon (Android < 8, iOS) — use padded version for consistent safe margins
+  image_path: "assets/images/spark_logo_padded.png"
+  remove_alpha_ios: false
+  # Adaptive icon (Android 8+) — transparent bg, padded foreground stays inside safe zone
+  adaptive_icon_background: "#00000000"
+  adaptive_icon_foreground: "assets/images/spark_logo_padded.png"
 
 flutter:
   uses-material-design: true
   assets:
     - assets/images/logo.png
+    - assets/images/spark_logo.png
+    - assets/images/spark_logo_padded.png
     - assets/fonts/Roboto-Regular.ttf
     - assets/fonts/Roboto-Bold.ttf

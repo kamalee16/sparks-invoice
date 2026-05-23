@@ -25,8 +25,20 @@ class SettingsScreen extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Theme.of(context).cardTheme.color,
-            borderRadius: BorderRadius.circular(24),
+            color: const Color(0xFF232326),
+            borderRadius: BorderRadius.circular(28),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.28),
+                blurRadius: 24,
+                offset: const Offset(0, 10),
+              ),
+              BoxShadow(
+                color: const Color(0xFF00E5CC).withOpacity(0.03),
+                blurRadius: 18,
+                spreadRadius: 1,
+              ),
+            ],
           ),
           child: Row(children: [
             CircleAvatar(
@@ -46,7 +58,7 @@ class SettingsScreen extends StatelessWidget {
 
         // App info
         _SettingsTile(icon: Icons.info_outline_rounded, iconColor: AppColors.textSecondary, title: 'Version', trailing: const Text('1.0.0', style: TextStyle(color: AppColors.textSecondary, fontSize: 13))),
-        const SizedBox(height: 8),
+        const SizedBox(height: 18),
 
         // Company settings
         GestureDetector(
@@ -99,13 +111,18 @@ class _SettingsTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: AppColors.darkCard,
-        borderRadius: BorderRadius.circular(18),
+        color: const Color(0xFF232326),
+        borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(0.28),
+            blurRadius: 24,
+            offset: const Offset(0, 10),
+          ),
+          BoxShadow(
+            color: const Color(0xFF00E5CC).withOpacity(0.03),
+            blurRadius: 18,
+            spreadRadius: 1,
           ),
         ],
       ),

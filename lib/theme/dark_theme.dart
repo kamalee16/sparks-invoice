@@ -4,18 +4,18 @@ import 'app_colors.dart';
 final darkTheme = ThemeData(
   useMaterial3: true,
   brightness: Brightness.dark,
-  scaffoldBackgroundColor: AppColors.darkBg,
+  scaffoldBackgroundColor: const Color(0xFF111318),
   colorScheme: const ColorScheme.dark(
     primary: AppColors.primary,
     secondary: AppColors.secondary,
-    surface: AppColors.darkSurface,
+    surface: Color(0xFF232326),
     onPrimary: Colors.white,
     onSurface: Colors.white,
-    surfaceContainer: AppColors.darkCard,
+    surfaceContainer: Color(0xFF232326),
   ),
   appBarTheme: const AppBarTheme(
     centerTitle: false,
-    backgroundColor: Colors.transparent,
+    backgroundColor: Color(0xFF111318),
     elevation: 0,
     scrolledUnderElevation: 0,
     titleTextStyle: TextStyle(
@@ -27,13 +27,14 @@ final darkTheme = ThemeData(
     iconTheme: IconThemeData(color: Colors.white, size: 24),
   ),
   cardTheme: CardThemeData(
-    color: AppColors.darkCard,
+    color: const Color(0xFF232326),
     elevation: 0,
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(24),
+      borderRadius: BorderRadius.circular(28),
       side: BorderSide.none,
     ),
     margin: EdgeInsets.zero,
+    shadowColor: Colors.black,
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
@@ -86,14 +87,14 @@ final darkTheme = ThemeData(
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(18))),
   ),
   textTheme: const TextTheme(
-    displayLarge: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 32),
-    displayMedium: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 28),
-    displaySmall: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 24),
-    headlineMedium: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
-    titleLarge: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
-    titleMedium: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 16),
-    bodyLarge: TextStyle(color: Colors.white, fontSize: 16),
-    bodyMedium: const TextStyle(color: Colors.white70, fontSize: 14),
-    bodySmall: const TextStyle(color: Colors.white54, fontSize: 12),
+    displayLarge: TextStyle(color: Color(0xFFFFFFFF), fontWeight: FontWeight.bold, fontSize: 32),
+    displayMedium: TextStyle(color: Color(0xFFFFFFFF), fontWeight: FontWeight.bold, fontSize: 28),
+    displaySmall: TextStyle(color: Color(0xFFFFFFFF), fontWeight: FontWeight.bold, fontSize: 24),
+    headlineMedium: TextStyle(color: Color(0xFFFFFFFF), fontWeight: FontWeight.bold, fontSize: 20),
+    titleLarge: TextStyle(color: Color(0xFFFFFFFF), fontWeight: FontWeight.bold, fontSize: 18),
+    titleMedium: TextStyle(color: Color(0xFFFFFFFF), fontWeight: FontWeight.w600, fontSize: 16),
+    bodyLarge: TextStyle(color: Color(0xFFFFFFFF), fontSize: 16),
+    bodyMedium: TextStyle(color: Color(0xFFA0A0A0), fontSize: 14),
+    bodySmall: TextStyle(color: Color(0xFFA0A0A0), fontSize: 12),
   ),
 );

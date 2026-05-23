@@ -85,20 +85,25 @@ class _ClientCard extends StatelessWidget {
     final subColor = Theme.of(context).textTheme.bodySmall?.color ?? AppColors.textSecondary;
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6), // Rule 3
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 9), // Rule 3
       decoration: BoxDecoration(
         color: AppColors.darkCard,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.12),
-            blurRadius: 15,
-            offset: const Offset(0, 6),
+            color: Colors.black.withOpacity(0.28),
+            blurRadius: 24,
+            offset: const Offset(0, 10),
+          ),
+          BoxShadow(
+            color: const Color(0xFF00E5CC).withOpacity(0.03),
+            blurRadius: 18,
+            spreadRadius: 1,
           ),
         ],
       ),
       child: InkWell(
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(28),
         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ClientFormScreen(client: client))),
         onLongPress: () => _archive(context),
         child: Padding(
@@ -111,7 +116,6 @@ class _ClientCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   gradient: AppColors.heroGradient.withOpacity(0.12),
                   shape: BoxShape.circle,
-                  border: Border.all(color: primary.withOpacity(0.3), width: 1.5),
                 ),
                 child: Center(
                   child: Text(client.name[0].toUpperCase(), 

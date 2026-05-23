@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // Brand — Glassmorphism Premium Dark Theme
-  static const darkBg      = Color(0xFF0D1117); // Exact requested background
-  static const darkSurface = Color(0xFF161B22); // Exact requested card base
-  static const darkCard    = Color(0xFF161B22);
-  static const darkInput   = Color(0xFF0D1117);
+  // Brand — Premium Dark Theme
+  static const darkBg      = Color(0xFF111318); // Page background
+  static const darkSurface = Color(0xFF232326); // Card surface
+  static const darkCard    = Color(0xFF232326); // Card background
+  static const darkInput   = Color(0xFF1A1A1E); // Input field background
 
   // Accent Colors (Status Based)
   static const success = Color(0xFF00E5A8); // Revenue (Green)
@@ -35,9 +35,9 @@ class AppColors {
   static final outstandingGradient = glassGradient(neutral);
 
   // Text Colors
-  static const textPrimary   = Colors.white;
-  static const textSecondary = Colors.white70;
-  static const textMuted     = Colors.white54;
+  static const textPrimary   = Color(0xFFFFFFFF);
+  static const textSecondary = Color(0xFFA0A0A0);
+  static const textMuted     = Color(0xFF707070);
 
   // Soft Glow Helper
   static List<BoxShadow> glowShadow(Color color) => [
