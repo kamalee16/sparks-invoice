@@ -763,7 +763,6 @@ class _InvoiceCreateScreenState extends State<InvoiceCreateScreen> {
                       const SizedBox(height: 8),
                       const Text('Sparks', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.white)),
                       const SizedBox(height: 4),
-                      const Text('Welbuilt AI Solutions Pvt Ltd', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
                       const Text('India', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
                       const Text('contactsparksai@gmail.com', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
                     ],

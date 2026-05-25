@@ -325,7 +325,9 @@ class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
                             _company?.name.isNotEmpty == true ? _company!.name : 'Sparks AI',
                             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                           ),
-                          if (_company?.legalName.isNotEmpty == true)
+                          if (_company?.legalName.isNotEmpty == true &&
+                              _company!.legalName != 'Welbuilt AI Solutions Private Limited' &&
+                              _company!.legalName != 'Welbuilt AI Solutions Pvt Ltd')
                             Text(_company!.legalName, style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 12), softWrap: true),
                           if (_company?.address.isNotEmpty == true)
                             Text(_company!.address, style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 12), softWrap: true)

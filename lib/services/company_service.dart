@@ -20,7 +20,7 @@ class CompanyService {
       } else {
         final defaultData = {
           'companyName': "Sparks AI",
-          'legalName': "Welbuilt AI Solutions Private Limited",
+          'legalName': "",
           'country': "India",
           'email': "contactsparksai@gmail.com",
           'website': "sparksai.in",
@@ -38,7 +38,7 @@ class CompanyService {
   Company getCompanyDetails() {
     return _cachedCompany ?? const Company(
       name: "Sparks AI",
-      legalName: "Welbuilt AI Solutions Private Limited",
+      legalName: "",
       country: "India",
       email: "contactsparksai@gmail.com",
       website: "sparksai.in",

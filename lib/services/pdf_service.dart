@@ -96,21 +96,19 @@ class PdfService {
 
           // ── FROM / TO ─────────────────────────────────────────────────────
           pw.Row(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
-            // FROM — left
+            // FROM — left (clean minimal layout)
             pw.Expanded(child: pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
               pw.Text('From:', style: bld(11)),
               pw.SizedBox(height: 6),
               pw.Text(comp.name.isNotEmpty ? comp.name : 'Sparks AI', style: bld(10)),
-              if (comp.legalName.isNotEmpty) pw.Text(comp.legalName, style: reg(9, color: _grey)),
-              if (comp.address.isNotEmpty)
-                pw.Text(comp.address, style: reg(9, color: _grey))
-              else if (addressImage != null)
-                pw.Image(addressImage!, height: 28)
-              else
-                pw.Text('India', style: reg(9, color: _grey)),
-              if (comp.email.isNotEmpty)   pw.Text(comp.email,   style: reg(9, color: _grey)),
-              if (comp.website.isNotEmpty) pw.Text(comp.website, style: reg(9, color: _grey)),
-              if (comp.phone.isNotEmpty)   pw.Text(comp.phone,   style: reg(9, color: _grey)),
+              pw.SizedBox(height: 3),
+              pw.Text('India', style: reg(9, color: _grey)),
+              pw.SizedBox(height: 3),
+              pw.Text('Email: ${comp.email.isNotEmpty ? comp.email : 'contactsparksai@gmail.com'}', style: reg(9, color: _grey)),
+              pw.SizedBox(height: 3),
+              pw.Text('Website: ${comp.website.isNotEmpty ? comp.website : 'sparksai.in'}', style: reg(9, color: _grey)),
+              pw.SizedBox(height: 3),
+              pw.Text('Phone: ${comp.phone.isNotEmpty ? comp.phone : '+91 93453 64408'}', style: reg(9, color: _grey)),
             ])),
             pw.SizedBox(width: 40),
             // TO — right block (all left aligned)
@@ -296,7 +294,7 @@ class PdfService {
     ));
 
     final output = await getTemporaryDirectory();
-    final file = File('${output.path}/invoice_${invoice.id ?? 'draft'}.pdf');
+    final file = File('${output.path}/${invoice.invoiceNumber}.pdf');
     final pdfBytes = await pdf.save();
     if (pdfBytes.isEmpty) throw Exception('PDF generation produced empty file');
     await file.writeAsBytes(pdfBytes);
