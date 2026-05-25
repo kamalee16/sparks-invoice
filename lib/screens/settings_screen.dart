@@ -50,14 +50,14 @@ class SettingsScreen extends StatelessWidget {
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(email, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: onBg), overflow: TextOverflow.ellipsis),
               const SizedBox(height: 4),
-              Text('Signed in', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+              Text('Signed in', style: const TextStyle(color: Color(0xFFA0A0A0), fontSize: 12)),
             ])),
           ]),
         ),
         const SizedBox(height: 24),
 
         // App info
-        _SettingsTile(icon: Icons.info_outline_rounded, iconColor: AppColors.textSecondary, title: 'Version', trailing: const Text('1.0.0', style: TextStyle(color: AppColors.textSecondary, fontSize: 13))),
+        _SettingsTile(icon: Icons.info_outline_rounded, iconColor: AppColors.textSecondary, title: 'Version', trailing: const Text('1.0.0', style: TextStyle(color: Color(0xFFA0A0A0), fontSize: 12))),
         const SizedBox(height: 18),
 
         // Company settings
@@ -136,7 +136,7 @@ class _SettingsTile extends StatelessWidget {
           ),
           child: Icon(icon, color: iconColor, size: 22),
         ),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15, color: Colors.white)),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.white)),
         trailing: trailing,
       ),
     );

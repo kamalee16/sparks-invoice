@@ -323,20 +323,20 @@ class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
                           const SizedBox(height: 6),
                           Text(
                             _company?.name.isNotEmpty == true ? _company!.name : 'Sparks AI',
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18, color: Colors.white),
                           ),
                           if (_company?.legalName.isNotEmpty == true &&
                               _company!.legalName != 'Welbuilt AI Solutions Private Limited' &&
                               _company!.legalName != 'Welbuilt AI Solutions Pvt Ltd')
-                            Text(_company!.legalName, style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 12), softWrap: true),
+                            Text(_company!.legalName, style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 14, fontWeight: FontWeight.w400, height: 1.5), softWrap: true),
                           if (_company?.address.isNotEmpty == true)
-                            Text(_company!.address, style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 12), softWrap: true)
+                            Text(_company!.address, style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 14, fontWeight: FontWeight.w400, height: 1.5), softWrap: true)
                           else
-                            Text('India', style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 12)),
+                            Text('India', style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 14, fontWeight: FontWeight.w400, height: 1.5)),
                           if (_company?.email.isNotEmpty == true)
-                            Text(_company!.email, style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 12)),
+                            Text(_company!.email, style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 14, fontWeight: FontWeight.w400, height: 1.5)),
                           if (_company?.phone.isNotEmpty == true)
-                            Text(_company!.phone, style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 12)),
+                            Text(_company!.phone, style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 14, fontWeight: FontWeight.w400, height: 1.5)),
                         ],
                       ),
                     ),
@@ -351,23 +351,23 @@ class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
                           Text(
                             c.name,
                             softWrap: true,
-                            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18, color: Colors.white),
                           ),
                           const SizedBox(height: 4),
                           if (c.contactPerson.isNotEmpty) ...[
-                            Text(c.contactPerson, style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 12)),
+                            Text(c.contactPerson, style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 14, fontWeight: FontWeight.w400, height: 1.5)),
                             const SizedBox(height: 4),
                           ],
                           if (c.phone.isNotEmpty) ...[
-                            Text('Phone: ${c.phone}', style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 12)),
+                            Text('Phone: ${c.phone}', style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 14, fontWeight: FontWeight.w400, height: 1.5)),
                             const SizedBox(height: 4),
                           ],
-                          Text('Email: ${c.email}', style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 12)),
+                          Text('Email: ${c.email}', style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 14, fontWeight: FontWeight.w400, height: 1.5)),
                           if (c.billingAddress.isNotEmpty) ...[
                             const SizedBox(height: 4),
                             Text(
                               '${c.billingAddress}${c.city.isNotEmpty ? ", ${c.city}" : ""}',
-                              style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 12),
+                              style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 14, fontWeight: FontWeight.w400, height: 1.5),
                               softWrap: true,
                             ),
                           ],
@@ -401,10 +401,10 @@ class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
               padding: const EdgeInsets.symmetric(vertical: 8),
               child: Row(children: [
                 Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(item.name, style: const TextStyle(fontWeight: FontWeight.w600)),
-                  Text('${item.quantity} x $_sym${_fmt(item.price)}', style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 12)),
+                  Text(item.name, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18, color: Colors.white)),
+                  Text('${item.quantity} x $_sym${_fmt(item.price)}', style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 14, fontWeight: FontWeight.w400, height: 1.5)),
                 ])),
-                Text('$_sym${_fmt(item.subtotal)}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text('$_sym${_fmt(item.subtotal)}', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18, color: Colors.white)),
               ]),
             )),
             const Divider(),
@@ -417,15 +417,15 @@ class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
 
           if (_invoice.notes.isNotEmpty) ...[
             const SizedBox(height: 18),
-            _infoCard('NOTES', [Text(_invoice.notes, style: TextStyle(color: const Color(0xFFA0A0A0)))]),
+            _infoCard('NOTES', [Text(_invoice.notes, style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 14, fontWeight: FontWeight.w400, height: 1.5))]),
           ],
           if (_invoice.termsAndConditions.isNotEmpty) ...[
             const SizedBox(height: 18),
-            _infoCard('TERMS & CONDITIONS', [Text(_invoice.termsAndConditions, style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 12))]),
+            _infoCard('TERMS & CONDITIONS', [Text(_invoice.termsAndConditions, style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 14, fontWeight: FontWeight.w400, height: 1.5))]),
           ],
           if (_invoice.bankDetails.isNotEmpty) ...[
             const SizedBox(height: 18),
-            _infoCard('BANK DETAILS', [Text(_invoice.bankDetails, style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 12))]),
+            _infoCard('BANK DETAILS', [Text(_invoice.bankDetails, style: TextStyle(color: const Color(0xFFA0A0A0), fontSize: 14, fontWeight: FontWeight.w400, height: 1.5))]),
           ],
 
           // Status history
@@ -501,7 +501,7 @@ class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
         ],
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(label, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.textMuted, letterSpacing: 1.5)),
+        Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFFA0A0A0), letterSpacing: 1.2)),
         const SizedBox(height: 12),
         // Inner content area — slightly lighter for layered depth
         Container(
@@ -526,9 +526,9 @@ class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
 
   Widget _labelValue(String label, String value, {bool danger = false}) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(label, style: const TextStyle(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold)),
+      Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: Color(0xFF8A8A8A))),
       const SizedBox(height: 2),
-      Text(value, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: danger ? Colors.red : null)),
+      Text(value, style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18, color: danger ? Colors.red : Colors.white)),
     ]);
   }
 
@@ -536,8 +536,8 @@ class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3),
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text(label, style: TextStyle(fontWeight: isBold ? FontWeight.bold : FontWeight.normal, fontSize: isBold ? 16 : 14)),
-        Text('${isNeg ? "- " : ""}$_sym${_fmt(value)}', style: TextStyle(fontWeight: isBold ? FontWeight.bold : FontWeight.w600, fontSize: isBold ? 16 : 14, color: isBold ? Theme.of(context).colorScheme.primary : null)),
+        Text(label, style: TextStyle(fontWeight: isBold ? FontWeight.w700 : FontWeight.w500, fontSize: isBold ? 18 : 11, color: isBold ? Colors.white : const Color(0xFF8A8A8A))),
+        Text('${isNeg ? "- " : ""}$_sym${_fmt(value)}', style: TextStyle(fontWeight: isBold ? FontWeight.w800 : FontWeight.w600, fontSize: isBold ? 30 : 14, color: isBold ? const Color(0xFF00E5CC) : Colors.white)),
       ]),
     );
   }
@@ -631,3 +631,4 @@ class _InvoiceHeader extends StatelessWidget {
     ]);
   }
 }
+

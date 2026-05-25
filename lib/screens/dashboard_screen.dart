@@ -129,6 +129,7 @@ class _DashboardScreenState extends State<DashboardScreen>
             child: GestureDetector(
               onTap: _showProfileMenu,
               child: CircleAvatar(
+                
                 radius: 17,
                 backgroundColor: primary.withOpacity(0.15),
                 child: Text(

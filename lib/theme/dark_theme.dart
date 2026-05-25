@@ -20,9 +20,9 @@ final darkTheme = ThemeData(
     scrolledUnderElevation: 0,
     titleTextStyle: TextStyle(
       color: Colors.white,
-      fontSize: 22,
-      fontWeight: FontWeight.bold,
-      letterSpacing: -0.5,
+      fontSize: 20,
+      fontWeight: FontWeight.w700,
+      letterSpacing: -0.3,
     ),
     iconTheme: IconThemeData(color: Colors.white, size: 24),
   ),

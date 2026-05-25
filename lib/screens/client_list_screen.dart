@@ -128,13 +128,13 @@ class _ClientCard extends StatelessWidget {
               Expanded( // Rule 1
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Text(client.name, 
-                      style: TextStyle(fontWeight: FontWeight.w900, fontSize: 17, color: onBg, letterSpacing: -0.5),
+                      style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 17, color: Colors.white, letterSpacing: -0.5),
                       maxLines: 1, // Rule 2
                       overflow: TextOverflow.ellipsis),
                   if (client.contactPerson.isNotEmpty) ...[
                     const SizedBox(height: 2),
                     Text(client.contactPerson, 
-                        style: TextStyle(color: subColor, fontSize: 13, fontWeight: FontWeight.bold),
+                        style: const TextStyle(color: Color(0xFFA0A0A0), fontSize: 13, fontWeight: FontWeight.w400),
                         maxLines: 1, // Rule 2
                         overflow: TextOverflow.ellipsis),
                   ],
@@ -143,7 +143,7 @@ class _ClientCard extends StatelessWidget {
                     Icon(Icons.email_rounded, size: 14, color: subColor.withOpacity(0.6)),
                     const SizedBox(width: 6),
                     Expanded(child: Text(client.email, 
-                        style: TextStyle(color: subColor, fontSize: 12, fontWeight: FontWeight.w500), 
+                        style: const TextStyle(color: Color(0xFFA0A0A0), fontSize: 13, fontWeight: FontWeight.w400), 
                         maxLines: 1, // Rule 2
                         overflow: TextOverflow.ellipsis)),
                   ]),

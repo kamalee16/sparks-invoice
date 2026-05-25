@@ -176,49 +176,50 @@ class _InvoiceListScreenState extends State<InvoiceListScreen> {
                   onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => InvoiceDetailsScreen(invoice: inv))),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.start, // Rule 6
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
+                        // Status-colored icon
                         Container(
-                          width: 52, height: 52, 
+                          width: 44, height: 44,
                           decoration: BoxDecoration(
-                            color: c.withOpacity(0.12), 
-                            borderRadius: BorderRadius.circular(16),
-                          ), 
-                          child: Icon(Icons.receipt_rounded, color: c, size: 24),
+                            color: c.withOpacity(0.12),
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: Icon(Icons.receipt_rounded, color: c, size: 22),
                         ),
-                        const SizedBox(width: 12), // Rule 6
-                        Expanded( // Rule 1
+                        const SizedBox(width: 12),
+                        // Invoice ID → Date → Amount stacked vertically
+                        Expanded(
                           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                            Text(inv.invoiceNumber, 
-                                style: TextStyle(fontWeight: FontWeight.w900, fontSize: 17, color: onBg, letterSpacing: -0.5),
-                                maxLines: 1, // Rule 2
+                            Text(inv.invoiceNumber,
+                                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Color(0xFFA0A0A0)),
+                                maxLines: 1,
                                 overflow: TextOverflow.ellipsis),
                             const SizedBox(height: 4),
-                            Text(DateFormat('dd MMM yyyy').format(inv.date.toDate()), 
-                                style: const TextStyle(color: AppColors.textSecondary, fontSize: 13, fontWeight: FontWeight.bold),
-                                maxLines: 1, // Rule 2
+                            Text(DateFormat('dd MMM yyyy').format(inv.date.toDate()),
+                                style: const TextStyle(color: Color(0xFF8A8A8A), fontSize: 12, fontWeight: FontWeight.w500),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis),
+                            const SizedBox(height: 4),
+                            Text('$sym${NumberFormat('#,##0.##').format(inv.total)}',
+                                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 20, color: Colors.white),
+                                maxLines: 1,
                                 overflow: TextOverflow.ellipsis),
                           ]),
                         ),
-                        const SizedBox(width: 8), // Rule 6
-                        Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-                          Text('$sym${NumberFormat('#,##0.##').format(inv.total)}', 
-                              style: TextStyle(fontWeight: FontWeight.w900, fontSize: 17, color: onBg, letterSpacing: -0.5),
-                              maxLines: 1, // Rule 2
-                              overflow: TextOverflow.ellipsis),
-                          const SizedBox(height: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5), 
-                            decoration: BoxDecoration(
-                              color: c.withOpacity(0.15), 
-                              borderRadius: BorderRadius.circular(10),
-                            ), 
-                            child: Text(status.name.toUpperCase(), 
-                                style: TextStyle(color: c, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 0.5),
-                                maxLines: 1, // Rule 2
-                                overflow: TextOverflow.ellipsis),
+                        const SizedBox(width: 8),
+                        // Status badge — right aligned
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          decoration: BoxDecoration(
+                            color: c.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                        ]),
+                          child: Text(status.name.toUpperCase(),
+                              style: TextStyle(color: c, fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 0.5),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 16),
