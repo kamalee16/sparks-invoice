@@ -62,16 +62,6 @@ class _DashboardScreenState extends State<DashboardScreen>
   }
 
   // ── Dialogs ────────────────────────────────────────────────────────────────
-  void _showNotifications() => showDialog(
-    context: context,
-    builder: (_) => AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      title: const Text('Notifications'),
-      content: const Text('No notifications at this time.'),
-      actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
-    ),
-  );
-
   void _showProfileMenu() {
     final user    = FirebaseAuth.instance.currentUser;
     final primary = Theme.of(context).colorScheme.primary;
@@ -123,9 +113,8 @@ class _DashboardScreenState extends State<DashboardScreen>
         elevation: 0,
         title: Text('Dashboard', style: TextStyle(color: onBg, fontWeight: FontWeight.bold, fontSize: 20)),
         actions: [
-          IconButton(icon: Icon(Icons.notifications_none_rounded, color: subColor), onPressed: _showNotifications),
           Padding(
-            padding: const EdgeInsets.only(right: 12),
+            padding: const EdgeInsets.only(right: 16),
             child: GestureDetector(
               onTap: _showProfileMenu,
               child: CircleAvatar(

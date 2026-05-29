@@ -9,7 +9,6 @@ import '../services/client_service.dart';
 import '../services/invoice_service.dart';
 import '../services/pdf_service.dart';
 import '../theme/app_colors.dart';
-import '../widgets/app_drawer.dart';
 import 'client_form_screen.dart';
 import 'dashboard_screen.dart';
 
@@ -365,7 +364,6 @@ class _InvoiceCreateScreenState extends State<InvoiceCreateScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const AppDrawer(currentRoute: '/create-invoice'),
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text(widget.existingInvoice != null ? 'Edit Invoice' : 'New Invoice'),
